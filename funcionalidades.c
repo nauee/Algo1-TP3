@@ -868,7 +868,6 @@ void escribir_archivo_caminos(FILE** archivo_caminos, coordenada_t camino_1[MAX_
     fprintf(*archivo_caminos, "CAMINO=1\n");
     escribir_camino(archivo_caminos, camino_1, tope_camino_1);
   }else if(n_camino == 3){
-    fprintf(*archivo_caminos, "NIVEL=3\n");
     fprintf(*archivo_caminos, "CAMINO=2\n");
     escribir_camino(archivo_caminos, camino_2, tope_camino_2);
   }else if(n_camino == 4){
@@ -876,7 +875,6 @@ void escribir_archivo_caminos(FILE** archivo_caminos, coordenada_t camino_1[MAX_
     fprintf(*archivo_caminos, "CAMINO=1\n");
     escribir_camino(archivo_caminos, camino_1, tope_camino_1);
   }else{
-    fprintf(*archivo_caminos, "NIVEL=4\n");
     fprintf(*archivo_caminos, "CAMINO=2\n");
     escribir_camino(archivo_caminos, camino_2, tope_camino_2);
   }
@@ -1104,7 +1102,7 @@ void modificar_ruta_caminos(char ruta[MAX_RUTA]){
 void modificar_resistencia_torres(int *resistencia_torre){
   printf(AMARILLO"\n-> Inserta el valor de la resistencia que desees (Por defecto = -1): "VERDE);
   scanf("%i",resistencia_torre);
-  while((*resistencia_torre < 1) && (*resistencia_torre != -1)){
+  while(((*resistencia_torre < 1) || (*resistencia_torre > 9999)) && (*resistencia_torre != -1)){
     printf(AMARILLO"\n-> Ese valor no es valido (Por defecto = -1): "VERDE);
     scanf("%i",resistencia_torre);
   }
@@ -1113,7 +1111,7 @@ void modificar_resistencia_torres(int *resistencia_torre){
 void modificar_cant_defensores(int *cant_defensores){
   printf(AMARILLO"\n-> Inserta el valor de la cantidad de defensores que desees (Por defecto = -1): "VERDE);
   scanf("%i",cant_defensores);
-  while((*cant_defensores < 0) && (*cant_defensores != -1)){
+  while(((*cant_defensores < 0) || (*cant_defensores > 99)) && (*cant_defensores != -1)){
     printf(AMARILLO"\n-> Ese valor no es valido (Por defecto = -1): "VERDE);
     scanf("%i",cant_defensores);
   }

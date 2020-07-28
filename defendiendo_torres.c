@@ -19,8 +19,6 @@ const char ENTRADA = 'E';
 const char TORRE = 'T';
 const char PASTO = '~';
 const char ORCO = 'O';
-static const int ELFOS_INICIALES_EXTRA = 10;
-static const int ENANOS_INICIALES_EXTRA = 10;
 const int VIDA_INICIAL_ORCOS = 200;
 const char MAL_ANIMO = 'M';
 const char REGULAR_ANIMO = 'R';
@@ -505,205 +503,56 @@ void mostrar_tablero(char tablero[MAX_FILAS][MAX_COLUMNAS], int tope){
 }
 
 /*
+*	Precondiciones: Debe recibir una resistencia actual valida, su maximo valido y una torre valida (1 o 2).
+*	Postcondiciones: Mostrara la barra de resistencia de la torre correspondiente por pantalla.
+*/
+void mostrar_barra_resistencia(int resist_actual, int maximo, int torre_actual){
+	int factor_i = maximo / 30;
+	int tercio_resist = maximo / 3;
+	printf(AMARILLO"║ Vida Torre %i:  "BLANCO, torre_actual);
+	for(int i = 0; i < 30; i++){
+		if (((i * factor_i) < resist_actual) && (resist_actual >= tercio_resist * 2)){
+			printf(""VERDE"▒");
+		}else if (((i * factor_i) < resist_actual) && (resist_actual >= tercio_resist)){
+			printf(""AMARILLO"▒");
+		}else if (((i * factor_i) < resist_actual) && (resist_actual > SIN_RESISTENCIA)){
+			printf(""ROJO"▒");
+		}else if (resist_actual <= SIN_RESISTENCIA){
+			printf(""ROJO"░");
+		}else{
+			printf("░");
+		}
+	}
+}
+
+/*
+*	Precondiciones: Debe recibir una resistencia actual valida, su maximo valido y un nivel valido (1,2,3,4).
+*	Postcondiciones: Mostrara la barra de resistencia de la torre correspondiente por pantalla.
+*/
+void mostrar_resistencia_torre(int resist_actual, int maximo, int nivel_actual){
+	if(resist_actual > 0){
+		printf(" %04d/%04d", resist_actual, maximo);
+	}else{
+		printf(" 0000/%04d", maximo);
+	}
+	if(nivel_actual == NIVEL_1 || nivel_actual == NIVEL_2){
+		printf(AMARILLO" ║"BLANCO"\n");
+		printf(AMARILLO"╠═════════════════════════════════════════════════════════╣"BLANCO"\n");
+	}else{
+		printf("                "AMARILLO"║"BLANCO"\n");
+		printf(AMARILLO"╠════════════════════════════════════════════════════════════════════════╣"BLANCO"\n");
+	}
+}
+
+/*
 *	Precondiciones: Debe recibir un juego con todas sus estructuras validas.
 *	Postcondiciones: Mostrara la resistencia restante de las torres.
 */
 void mostrar_vida(juego_t juego, torres_t maximos){
-	printf(""AMARILLO"║ Vida Torre 1:  "BLANCO"");
-
-	for(int i = 0; i < 30;i++){
-		if(((i*(maximos.resistencia_torre_1/30)) < (juego.torres.resistencia_torre_1)) && (juego.torres.resistencia_torre_1 >= ((maximos.resistencia_torre_1 * 10 ) / 15))){
-			printf(""VERDE"▒");
-		}else if(((i*(maximos.resistencia_torre_1/30)) < (juego.torres.resistencia_torre_1)) && (juego.torres.resistencia_torre_1 >= ((maximos.resistencia_torre_1 * 10) / 30))){
-			printf(""AMARILLO"▒");
-		}else if(((i*(maximos.resistencia_torre_1/30)) < (juego.torres.resistencia_torre_1)) && (juego.torres.resistencia_torre_1 > MINIMO_MALA_RESI)){
-			printf(""ROJO"▒");
-		}else if(juego.torres.resistencia_torre_1 <= SIN_RESISTENCIA){
-			printf(""ROJO"░");
-		}else{
-			printf("░");
-		}
-	}
-
-	if(juego.nivel_actual == NIVEL_1 || juego.nivel_actual == NIVEL_2){
-		if(maximos.resistencia_torre_1 < 10000 && maximos.resistencia_torre_1 > 999){
-			if(juego.torres.resistencia_torre_1 >= 1000){
-			printf(" %i/%i "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else if((juego.torres.resistencia_torre_1 >= 100) && (juego.torres.resistencia_torre_1 < 1000)){
-				printf(" 0%i/%i "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else if((juego.torres.resistencia_torre_1 > 10) && (juego.torres.resistencia_torre_1 < 100)){
-				printf(" 00%i/%i "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else if((juego.torres.resistencia_torre_1 > 0) && (juego.torres.resistencia_torre_1 < 10)){
-				printf(" 000%i/%i "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else{
-				printf(" 0000/%i "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_1);
-			}
-		}
-		else if(maximos.resistencia_torre_1 < 1000 && maximos.resistencia_torre_1 > 99){
-			if(juego.torres.resistencia_torre_1 >= 100){
-				printf("  %i/%i  "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else if((juego.torres.resistencia_torre_1 >= 10) && (juego.torres.resistencia_torre_1 < 100)){
-				printf("  0%i/%i  "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else if((juego.torres.resistencia_torre_1 > 0) && (juego.torres.resistencia_torre_1 < 10)){
-				printf("  00%i/%i  "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else{
-				printf("  000/%i  "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_1);
-			}
-		}else if(maximos.resistencia_torre_1 < 100 && maximos.resistencia_torre_1 > 9){
-			if(juego.torres.resistencia_torre_1 >= 10){
-				printf("   %i/%i   "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else if((juego.torres.resistencia_torre_1 > 0) && (juego.torres.resistencia_torre_1 < 10)){
-				printf("  0%i/%i   "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else{
-				printf("  000/%i   "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_1);
-			}
-		}else if(maximos.resistencia_torre_1 < 10 && maximos.resistencia_torre_1 > 0){
-			if(juego.torres.resistencia_torre_1 > 0){
-				printf("    %i/%i    "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else{
-				printf("     0/%i    "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_1);
-			}
-		}
-		printf(""AMARILLO"╠═════════════════════════════════════════════════════════╣"BLANCO"\n");
-	}else{
-		if(maximos.resistencia_torre_1 < 10000 && maximos.resistencia_torre_1 > 999){
-			if(juego.torres.resistencia_torre_1 >= 1000){
-			printf(" %i/%i                "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else if((juego.torres.resistencia_torre_1 >= 100) && (juego.torres.resistencia_torre_1 < 1000)){
-				printf(" 0%i/%i                "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else if((juego.torres.resistencia_torre_1 > 10) && (juego.torres.resistencia_torre_1 < 100)){
-				printf(" 00%i/%i                "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else if((juego.torres.resistencia_torre_1 > 0) && (juego.torres.resistencia_torre_1 < 10)){
-				printf(" 000%i/%i                "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else{
-				printf(" 0000/%i                "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_1);
-			}
-		}
-		else if(maximos.resistencia_torre_1 < 1000 && maximos.resistencia_torre_1 > 99){
-			if(juego.torres.resistencia_torre_1 >= 100){
-				printf("  %i/%i                 "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else if((juego.torres.resistencia_torre_1 >= 10) && (juego.torres.resistencia_torre_1 < 100)){
-				printf("  0%i/%i                 "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else if((juego.torres.resistencia_torre_1 > 0) && (juego.torres.resistencia_torre_1 < 10)){
-				printf("  00%i/%i                 "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else{
-				printf("  000/%i                 "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_1);
-			}
-		}else if(maximos.resistencia_torre_1 < 100 && maximos.resistencia_torre_1 > 9){
-			if(juego.torres.resistencia_torre_1 >= 10){
-				printf("   %i/%i                  "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else if((juego.torres.resistencia_torre_1 > 0) && (juego.torres.resistencia_torre_1 < 10)){
-				printf("  0%i/%i                  "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else{
-				printf("  000/%i                  "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_1);
-			}
-		}else if(maximos.resistencia_torre_1 < 10 && maximos.resistencia_torre_1 > 0){
-			if(juego.torres.resistencia_torre_1 > 0){
-				printf("    %i/%i                   "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
-			}else{
-				printf("     0/%i                   "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_1);
-			}
-		}
-		printf(""AMARILLO"╠════════════════════════════════════════════════════════════════════════╣"BLANCO"\n");
-	}
-
-	printf(""AMARILLO"║ Vida Torre 2:  ");
-
-	for(int i = 0; i < 30;i++){
-		if((i*(maximos.resistencia_torre_2/30)) < (juego.torres.resistencia_torre_2) && (juego.torres.resistencia_torre_2 >= (maximos.resistencia_torre_2 / 15))){
-			printf(""VERDE"▒");
-		}else if((i*(maximos.resistencia_torre_2/30)) < (juego.torres.resistencia_torre_2) && (juego.torres.resistencia_torre_2 >= (maximos.resistencia_torre_2 / 30))){
-			printf(""AMARILLO"▒");
-		}else if((i*(maximos.resistencia_torre_2/30)) < (juego.torres.resistencia_torre_2) && (juego.torres.resistencia_torre_2 > MINIMO_MALA_RESI)){
-			printf(""ROJO"▒");
-		}else if(juego.torres.resistencia_torre_2 <= SIN_RESISTENCIA){
-			printf(""ROJO"░");
-		}else{
-			printf("░");
-		}
-	}
-
-	if(juego.nivel_actual == NIVEL_1 || juego.nivel_actual == NIVEL_2){
-		if(maximos.resistencia_torre_2 < 10000 && maximos.resistencia_torre_2 > 999){
-			if(juego.torres.resistencia_torre_2 >= 1000){
-			printf(" %i/%i "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-		}else if((juego.torres.resistencia_torre_2 >= 100) && (juego.torres.resistencia_torre_2 < 1000)){
-				printf(" 0%i/%i "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-			}else if((juego.torres.resistencia_torre_2 > 10) && (juego.torres.resistencia_torre_2 < 100)){
-				printf(" 00%i/%i "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-			}else if((juego.torres.resistencia_torre_2 > 0) && (juego.torres.resistencia_torre_2 < 10)){
-				printf(" 000%i/%i "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-			}else{
-				printf(" 0000/%i "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_2);
-			}
-		}
-		else if(maximos.resistencia_torre_2 < 1000 && maximos.resistencia_torre_2 > 99){
-			if(juego.torres.resistencia_torre_2 >= 100){
-				printf("  %i/%i  "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-			}else if((juego.torres.resistencia_torre_2 >= 10) && (juego.torres.resistencia_torre_2 < 100)){
-				printf("  0%i/%i  "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-			}else if((juego.torres.resistencia_torre_2 > 0) && (juego.torres.resistencia_torre_2 < 10)){
-				printf("  00%i/%i  "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-			}else{
-				printf("  000/%i  "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_2);
-			}
-		}else if(maximos.resistencia_torre_2 < 100 && maximos.resistencia_torre_2 > 9){
-			if(juego.torres.resistencia_torre_2 >= 10){
-				printf("   %i/%i   "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-			}else if((juego.torres.resistencia_torre_2 > 0) && (juego.torres.resistencia_torre_2 < 10)){
-				printf("  0%i/%i   "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-			}else{
-				printf("  000/%i   "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_2);
-			}
-		}else if(maximos.resistencia_torre_2 < 10 && maximos.resistencia_torre_2 > 0){
-			if(juego.torres.resistencia_torre_2 > 0){
-				printf("    %i/%i    "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-			}else{
-				printf("     0/%i    "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_2);
-			}
-		}
-		printf(""AMARILLO"╠═════════════════════════════════════════════════════════╣"BLANCO"\n");
-	}else{
-		if(maximos.resistencia_torre_2 < 10000 && maximos.resistencia_torre_2 > 999){
-			if(juego.torres.resistencia_torre_2 >= 1000){
-			printf(" %i/%i                "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-		}else if((juego.torres.resistencia_torre_2 >= 100) && (juego.torres.resistencia_torre_2 < 1000)){
-				printf(" 0%i/%i                "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-			}else if((juego.torres.resistencia_torre_2 > 10) && (juego.torres.resistencia_torre_2 < 100)){
-				printf(" 00%i/%i                "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-			}else if((juego.torres.resistencia_torre_2 > 0) && (juego.torres.resistencia_torre_2 < 10)){
-				printf(" 000%i/%i                "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-			}else{
-				printf(" 0000/%i                "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_2);
-			}
-		}
-		else if(maximos.resistencia_torre_2 < 1000 && maximos.resistencia_torre_2 > 99){
-			if(juego.torres.resistencia_torre_2 >= 100){
-				printf("  %i/%i                 "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-			}else if((juego.torres.resistencia_torre_2 >= 10) && (juego.torres.resistencia_torre_2 < 100)){
-				printf("  0%i/%i                 "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-			}else if((juego.torres.resistencia_torre_2 > 0) && (juego.torres.resistencia_torre_2 < 10)){
-				printf("  00%i/%i                 "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-			}else{
-				printf("  000/%i                 "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_2);
-			}
-		}else if(maximos.resistencia_torre_2 < 100 && maximos.resistencia_torre_2 > 9){
-			if(juego.torres.resistencia_torre_2 >= 10){
-				printf("   %i/%i                  "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-			}else if((juego.torres.resistencia_torre_2 > 0) && (juego.torres.resistencia_torre_2 < 10)){
-				printf("  0%i/%i                  "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-			}else{
-				printf("  000/%i                  "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_2);
-			}
-		}else if(maximos.resistencia_torre_2 < 10 && maximos.resistencia_torre_2 > 0){
-			if(juego.torres.resistencia_torre_2 > 0){
-				printf("    %i/%i                   "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
-			}else{
-				printf("     0/%i                   "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_2);
-			}
-		}
-		printf(""AMARILLO"╠════════════════════════════════════════════════════════════════════════╣"BLANCO"\n");
-	}
+	mostrar_barra_resistencia(juego.torres.resistencia_torre_1, maximos.resistencia_torre_1, 1);
+	mostrar_resistencia_torre(juego.torres.resistencia_torre_1, maximos.resistencia_torre_1, juego.nivel_actual);
+	mostrar_barra_resistencia(juego.torres.resistencia_torre_2, maximos.resistencia_torre_2, 2);
+	mostrar_resistencia_torre(juego.torres.resistencia_torre_2, maximos.resistencia_torre_2, juego.nivel_actual);
 }
 
 /*
@@ -713,29 +562,13 @@ void mostrar_vida(juego_t juego, torres_t maximos){
 */
 void mostrar_defensores_extra(juego_t juego, torres_t maximos){
 	if(juego.nivel_actual == NIVEL_1 || juego.nivel_actual == NIVEL_2){
-		if(juego.torres.enanos_extra >= 10){
-			printf(""AMARILLO"║ Enanos extra restantes = %i/%i                          ║\n",juego.torres.enanos_extra, ENANOS_INICIALES_EXTRA);
-		}else{
-			printf(""AMARILLO"║ Enanos extra restantes = %i/%i                           ║\n",juego.torres.enanos_extra, ENANOS_INICIALES_EXTRA);
-		}
-		if(juego.torres.elfos_extra >= 10){
-			printf(""AMARILLO"║ Elfos extra restantes = %i/%i                           ║\n",juego.torres.elfos_extra, ELFOS_INICIALES_EXTRA);
-		}else{
-			printf(""AMARILLO"║ Elfos extra restantes = %i/%i                            ║\n",juego.torres.elfos_extra, ELFOS_INICIALES_EXTRA);
-		}
-		printf(""AMARILLO"╚═════════════════════════════════════════════════════════╝"BLANCO"\n");
+		printf(AMARILLO"║ Enanos extra restantes = %02d/%02d                          ║\n",juego.torres.enanos_extra, maximos.enanos_extra);
+		printf(AMARILLO"║ Elfos extra restantes = %02d/%02d                           ║\n",juego.torres.elfos_extra,maximos.elfos_extra);
+		printf(AMARILLO"╚═════════════════════════════════════════════════════════╝"BLANCO"\n");
 	}else{
-		if(juego.torres.enanos_extra >= 10){
-			printf(""AMARILLO"║ Enanos extra restantes = %i/%i                                         ║\n",juego.torres.enanos_extra, ENANOS_INICIALES_EXTRA);
-		}else{
-			printf(""AMARILLO"║ Enanos extra restantes = %i/%i                                          ║\n",juego.torres.enanos_extra, ENANOS_INICIALES_EXTRA);
-		}
-		if(juego.torres.elfos_extra >= 10){
-			printf(""AMARILLO"║ Elfos extra restantes = %i/%i                                          ║\n",juego.torres.elfos_extra, ELFOS_INICIALES_EXTRA);
-		}else{
-			printf(""AMARILLO"║ Elfos extra restantes = %i/%i                                           ║\n",juego.torres.elfos_extra, ELFOS_INICIALES_EXTRA);
-		}
-		printf(""AMARILLO"╚════════════════════════════════════════════════════════════════════════╝"BLANCO"\n");
+		printf(AMARILLO"║ Enanos extra restantes = %02d/%02d                                         ║\n",juego.torres.enanos_extra, maximos.enanos_extra);
+		printf(AMARILLO"║ Elfos extra restantes = %02d/%02d                                          ║\n",juego.torres.elfos_extra,maximos.elfos_extra);
+		printf(AMARILLO"╚════════════════════════════════════════════════════════════════════════╝"BLANCO"\n");
 	}
 }
 

@@ -443,26 +443,22 @@ void crear_caminos(juego_t *juego, FILE** arch_camino){
   }else{
     juego -> nivel.tope_camino_1 = 0;
     juego -> nivel.tope_camino_2 = 0;
-    if(juego -> nivel_actual == NIVEL_1){
-      fscanf(*arch_camino, "NIVEL=1\n");
+		int nivel_leyendo;
+		fscanf(*arch_camino, "NIVEL=%i\n", &nivel_leyendo);
+    if(nivel_leyendo == 1){
       fscanf(*arch_camino, "CAMINO=1\n");
       leer_camino(arch_camino, juego -> nivel.camino_1, &(juego -> nivel.tope_camino_1));
-    }else if(juego -> nivel_actual == NIVEL_2){
-      fscanf(*arch_camino, "NIVEL=2\n");
+    }else if(nivel_leyendo == 2){
       fscanf(*arch_camino, "CAMINO=2\n");
       leer_camino(arch_camino, juego -> nivel.camino_2, &(juego -> nivel.tope_camino_2));
-    }else if(juego -> nivel_actual == NIVEL_3){
-      fscanf(*arch_camino, "NIVEL=3\n");
+    }else if(nivel_leyendo == 3){
       fscanf(*arch_camino, "CAMINO=1\n");
       leer_camino(arch_camino, juego -> nivel.camino_1, &(juego -> nivel.tope_camino_1));
-      fscanf(*arch_camino, "NIVEL=3\n");
       fscanf(*arch_camino, "CAMINO=2\n");
       leer_camino(arch_camino, juego -> nivel.camino_2, &(juego -> nivel.tope_camino_2));
-    }else if(juego -> nivel_actual == NIVEL_4){
-      fscanf(*arch_camino, "NIVEL=4\n");
+    }else if(nivel_leyendo == 4){
       fscanf(*arch_camino, "CAMINO=1\n");
       leer_camino(arch_camino, juego -> nivel.camino_1, &(juego -> nivel.tope_camino_1));
-      fscanf(*arch_camino, "NIVEL=4\n");
       fscanf(*arch_camino, "CAMINO=2\n");
       leer_camino(arch_camino, juego -> nivel.camino_2, &(juego -> nivel.tope_camino_2));
     }
