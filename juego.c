@@ -1177,37 +1177,25 @@ void cargar_animos_necesarios(int *viento, int *humedad, char *animo_legolas, ch
 * Postcondiciones: Jugara el juego con la configuracion ingresada o por defecto (si no se ingreso configuracion),
 * y lo grabara en caso de que se ingrese una ruta de grabacion.
 */
-void jugar_juego(int argc, char *argv[]){
+void jugar_juego(char ruta_config[MAX_RUTA], char ruta_grabacion[MAX_RUTA]){
   configuracion_t config;
-  int pos_rec = -1;
-  int pos_config = -1;
   FILE* arch_config;
   FILE* arch_grabacion;
-	char nombre_config[MAX_NOMBRE];
-	strcpy(nombre_config, STR_POR_DEFECTO);
-  revisar_comandos_jugar(&pos_rec, &pos_config,argv,argc);
-  if(pos_config != -1){
-    char ruta[MAX_RUTA];
-    eliminar_indicador(ruta,argv[pos_config],7);
-    if(ruta[0] != '\0'){
-      arch_config = fopen(ruta, "r");
-    }
+	char nombre_config[MAX_NOMBRE] = STR_POR_DEFECTO;
+	printf("%s\n", ruta_grabacion);
+	if(strcmp(ruta_config, STR_POR_DEFECTO) != 0){
+		arch_config = fopen(ruta_config, "r");
 		if(arch_config){
-			copiar_nombre_config(nombre_config,ruta);
+			copiar_nombre_config(nombre_config, ruta_config);
 		}
-  }
+	}
   llenar_config(&config, &arch_config);
 	if(arch_config){
 		fclose(arch_config);
 	}
-
-  if(pos_rec != -1){
-    char ruta[MAX_RUTA];
-    eliminar_indicador(ruta,argv[pos_rec],10);
-    if(ruta[0] != '\0'){
-      arch_grabacion = fopen(ruta, "w");
-    }
-  }
+	if(strcmp(ruta_grabacion, STR_POR_DEFECTO) != 0){
+		arch_grabacion = fopen(ruta_grabacion, "w");
+	}
 
   srand ((unsigned)time(NULL));
   int viento;
@@ -1252,7 +1240,6 @@ void jugar_juego(int argc, char *argv[]){
 		fclose(arch_camino);
 	}
   finalizar_juego(juego,config,nombre_config);
-	remove("temp_max.dat");
   }
 
 /*****************************************************************************************************************************************************************************************************/

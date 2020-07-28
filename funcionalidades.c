@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-
+//
 /******************************************************************************************** Constantes *********************************************************************************************/
 
 #define BLANCO "\033[0m"
@@ -36,6 +36,7 @@
 #define CSV ".csv"
 #define FORMATO_RANKING "%[^;];%i\n"
 #define MAX_NOMBRE 50
+#define STR_POR_DEFECTO "-1"
 static const char ARRIBA_MAY = 'W';
 static const char ARRIBA_MIN = 'w';
 static const char ABAJO_MAY = 'S';
@@ -82,20 +83,6 @@ void eliminar_indicador(char dato[MAX_DATO], char argumento[],int primera_letra)
 }
 
 /******************************************************************************************* Pasar repeticion ****************************************************************************************/
-
-/*
-* Precondiciones: Debe recibir un vector de argumentos del main y su respectivo tope.
-* Postcondiciones: Modificara la posicion de la repeticion y de la velocidad por el lugar donde esta el argumento que la nombra, en caso de que lo haga.
-*/
-void revisar_comandos_repeticion(int *pos_rep, int *pos_vel, char * argv[], int argc){
-  for(int i = 1; i < argc; i++){
-    if(strncmp(argv[i],"grabacion=",10) == 0){
-      *pos_rep = i;
-    }else if(strncmp(argv[i],"velocidad=",10) == 0){
-      *pos_vel = i;
-    }
-  }
-}
 
 /*
 * Postcondiciones: Mostrara por pantalla una presentacion de la repeticion.
@@ -496,27 +483,16 @@ bool comenzo_nuevo_nivel(juego_t repeticion){
   return comenzo;
 }
 
-void pasar_repeticion(int argc, char *argv[]){
+void pasar_repeticion(float velocidad, char ruta_grabacion[MAX_RUTA]){
   juego_t repeticion;
-  int pos_rep = -1;
-  int pos_vel = -1;
-  float velocidad_rep = 1;
-  revisar_comandos_repeticion(&pos_rep, &pos_vel,argv,argc);
-  if(pos_rep == -1){
+
+  if(strcmp(ruta_grabacion, STR_POR_DEFECTO) == 0){
     printf("ERROR -> NO se especificó ruta de grabacion\n");
-    return;
   }
-  char ruta[MAX_RUTA];
-  eliminar_indicador(ruta,argv[pos_rep],10);
-  FILE* arch_repeticion = fopen(ruta, "r");
+  FILE* arch_repeticion = fopen(ruta_grabacion, "r");
   if(!(arch_repeticion)){
     printf("ERROR -> NO se encontró esa repetición\n");
     return;
-  }
-  if(pos_vel != -1){
-    char velocidad_cadena[MAX_VELOCIDAD];
-    eliminar_indicador(velocidad_cadena,argv[pos_vel],10);
-    velocidad_rep = (float) atof(velocidad_cadena);
   }
   mostrar_introduccion_repeticion();
   fread(&repeticion, sizeof(juego_t), 1, arch_repeticion);
@@ -531,7 +507,7 @@ void pasar_repeticion(int argc, char *argv[]){
       mostrar_introduccion_nivel_rep(repeticion.nivel_actual);
     }
     mostrar_juego(repeticion);
-    detener_el_tiempo(velocidad_rep);
+    detener_el_tiempo(velocidad);
     fread(&repeticion, sizeof(juego_t), 1, arch_repeticion);
   }
   finalizar_repeticion(repeticion);
@@ -1259,14 +1235,6 @@ void crear_configuracion_personalizada(char ruta[MAX_RUTA]){
 
 /******************************************************************************************* Mostrar ranking *****************************************************************************************/
 
-void eliminar_extension(char config[MAX_NOMBRE]){
-	char *nombre;
-	nombre = strtok(config,".");
-	if(nombre != NULL){
-		strcpy(config, nombre);
-	}
-}
-
 void revisar_comandos_ranking(int *pos_config, int *pos_cantidad, char * argv[], int argc){
   for(int i = 1; i < argc; i++){
     if(strncmp(argv[i],"listar=",7) == 0){
@@ -1277,37 +1245,15 @@ void revisar_comandos_ranking(int *pos_config, int *pos_cantidad, char * argv[],
   }
 }
 
-void mostrar_ranking(int argc, char *argv[]){
+void mostrar_ranking(int cantidad_rank, char ruta_ranking[MAX_RUTA]){
   system("clear");
-  int pos_config = -1;
-  int pos_cantidad = -1;
-  int cantidad_rank = -1;
-  char ruta_a_abrir[MAX_RUTA];
   FILE* arch_ranking;
-  strcpy(ruta_a_abrir, RANKING);
-  revisar_comandos_ranking(&pos_config, &pos_cantidad,argv,argc);
-  if(pos_cantidad != -1){
-    char cantidad_cadena[MAX_CANTIDAD];
-    eliminar_indicador(cantidad_cadena,argv[pos_cantidad],7);
-    cantidad_rank = atoi(cantidad_cadena);
-  }
-  char config_rank[MAX_RUTA];
-  if(pos_config != -1){
-    eliminar_indicador(config_rank, argv[pos_config], 7);
-    eliminar_extension(config_rank);
-    strcat(ruta_a_abrir, "_");
-    strcat(ruta_a_abrir, config_rank);
-    strcat(ruta_a_abrir, CSV);
-    arch_ranking = fopen(ruta_a_abrir, "r");
-    if(!arch_ranking && pos_config != -1){
+  arch_ranking = fopen(ruta_ranking, "r");
+    if(!arch_ranking && (strcmp(ruta_ranking, "ranking.csv") != 0)){
       printf(AMARILLO"-> NO existe ese ranking, se mostrara el ranking con la configuracion DEFAULT\n");
-      strcpy(ruta_a_abrir, "ranking.csv");
-      arch_ranking = fopen(ruta_a_abrir, "r");
+      strcpy(ruta_ranking, "ranking.csv");
+      arch_ranking = fopen(ruta_ranking, "r");
     }
-  }else{
-    strcpy(ruta_a_abrir, "ranking.csv");
-    arch_ranking = fopen(ruta_a_abrir, "r");
-  }
   if(!arch_ranking){
     printf(AMARILLO"-> NO existe el ranking DEFAULT\n\n");
     return;

@@ -21,10 +21,10 @@ typedef struct configuracion {
 } configuracion_t;
 
 /*
-* Precondiciones: Debe recibir argumentos del main y su respectivo tope.
+* Precondiciones: Debe recibir una velocidad de grabacion valida y una ruta donde este la grabacion valida.
 * Postcondiciones: Mostrara por pantalla la repeticion solicitada en caso de poder abrirla.
 */
-void pasar_repeticion(int argc, char *argv[]);
+void pasar_repeticion(float velocidad, char ruta_grabacion[MAX_RUTA]);
 
 /*
 * Postcondiciones: Mostrara por pantalla los comandos disponibles para ejecutar el juego.
@@ -49,6 +49,10 @@ void crear_caminos_personalizados(char ruta[MAX_RUTA]);
 */
 void crear_configuracion_personalizada(char ruta[MAX_RUTA]);
 
-void mostrar_ranking(int argc, char *argv[]);
+/*
+* Precondiciones: Debe recibir una ruta de ranking y una cantidad a listar valida.
+* Postcondiones: Mostrara por pantalla el ranking pedido o el Default en caso de no poder abrirlo (o ninguno en caso de no existir default).
+*/
+void mostrar_ranking(int cantidad_rank, char ruta_ranking[MAX_RUTA]);
 
 #endif
