@@ -6,7 +6,7 @@ Consideraciones:
 
 Configuración:
 
--> La resistencia máxima que puede ingresar el usuario son 9999.
+-> La resistencia máxima que puede ingresar el usuario es 9999.
 
 -> La cantidad máxima de defensores tanto extra como por nivel es 50.
 
