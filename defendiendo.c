@@ -13,6 +13,12 @@
 #define RANKING "ranking"
 #define CSV ".csv"
 
+/************************************************************************************************Extra************************************************************************************************/
+
+/*
+*	Precondiciones: Debe recibir una ruta de configuracion valida.
+*	Postcondiciones: Modificara la ruta eliminando su extension.
+*/
 void eliminar_extension(char config[MAX_RUTA]){
 	char *nombre;
 	nombre = strtok(config,".");
@@ -21,6 +27,10 @@ void eliminar_extension(char config[MAX_RUTA]){
 	}
 }
 
+/*
+*	Precondiciones: Debe recibir un vector de argumentos del main y su tope.
+*	Postcondiciones: Modificara, en caso de encontrar, la ruta de configuracion y de grabacion.
+*/
 void encontrar_valores_jugar(char ruta_config[MAX_RUTA], char ruta_grabacion[MAX_RUTA], char *argv[], int argc){
   int pos_rec = -1;
   int pos_config = -1;
@@ -43,13 +53,17 @@ void encontrar_valores_jugar(char ruta_config[MAX_RUTA], char ruta_grabacion[MAX
   }
 }
 
+/*
+*	Precondiciones: Debe recibir un vector de argumentos del main y su tope.
+*	Postcondiciones: Modificara, en caso de encontrar, la ruta de grabacion y la velocidad.
+*/
 void encontrar_valores_repeticion(float *velocidad, char ruta_grabacion[MAX_RUTA], char *argv[], int argc){
   int pos_rec = -1;
   int pos_vel = -1;
   for(int i = 2; i < argc; i++){
-    if(strncmp(argv[i],"grabacion=",10) == 0){
+    if(strncmp(argv[i],"grabacion=",strlen("grabacion=")) == 0){
       pos_rec = i;
-    }else if(strncmp(argv[i],"velocidad=",10) == 0){
+    }else if(strncmp(argv[i],"velocidad=",strlen("velocidad=")) == 0){
       pos_vel = i;
     }
   }
@@ -65,14 +79,18 @@ void encontrar_valores_repeticion(float *velocidad, char ruta_grabacion[MAX_RUTA
   }
 }
 
+/*
+*	Precondiciones: Debe recibir un vector de argumentos del main y su tope.
+*	Postcondiciones: Modificara, en caso de encontrar, la ruta del ranking y la cantidad a listar.
+*/
 void encontrar_valores_ranking(int *cantidad_rank, char ruta_ranking[MAX_RUTA], char *argv[], int argc){
   int pos_config = -1;
   int pos_cantidad = -1;
   strcpy(ruta_ranking, RANKING);
   for(int i = 2; i < argc; i++){
-    if(strncmp(argv[i],"config=",7) == 0){
+    if(strncmp(argv[i],"config=",strlen("config=")) == 0){
       pos_config = i;
-    }else if(strncmp(argv[i],"listar=",7) == 0){
+    }else if(strncmp(argv[i],"listar=",strlen("listar=")) == 0){
       pos_cantidad = i;
     }
   }

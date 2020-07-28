@@ -355,6 +355,10 @@ bool son_caminos_separados(juego_t juego){
 	return caminos_separados;
 }
 
+/*
+*	Precondiciones: Debe recibir un archivo abierto que contenga el camino a leer.
+*	Postcondiciones: Leera del archivo el camino y lo guardara en el vector camino con su respectivo tope.
+*/
 void leer_camino(FILE** arch_camino, coordenada_t camino[MAX_LONGITUD_CAMINO], int *tope_camino){
   coordenada_t casillero_camino;
   int leidos = fscanf(*arch_camino, "%i;%i\n", &(casillero_camino.fil), &(casillero_camino.col));
@@ -367,8 +371,8 @@ void leer_camino(FILE** arch_camino, coordenada_t camino[MAX_LONGITUD_CAMINO], i
 }
 
 /*
-*	Precondiciones: Debera recibir un juego con un nivel valido (1,2,3,4).
-*	Postcondiciones: Creara el o los caminos validos segun el nivel correspondiente.
+*	Precondiciones: Debera recibir un juego con un nivel valido (1,2,3,4) y un archivo valido.
+*	Postcondiciones: Creara el o los caminos validos segun el nivel correspondiente o leera los creados por el usuario.
 */
 void crear_caminos(juego_t *juego, FILE** arch_camino){
 
@@ -506,7 +510,7 @@ void eligio_posicion(nivel_t *nivel, int n_def, bool *eligio_pos){
 }
 
 /*
-*	Precondiciones: Debera recibir un juego con todas sus estructuras validas.
+*	Precondiciones: Debera recibir un juego con todas sus estructuras validas y un torres_t con los valores maximos iniciales.
 *	Postcondiciones: Mostrara por pantalla el juego mientras se esta ubicando al defensor.
 */
 void mostrar_modificado(juego_t *juego, torres_t maximos){
@@ -518,7 +522,7 @@ void mostrar_modificado(juego_t *juego, torres_t maximos){
 }
 
 /*
-*	Precondiciones: Debera recibir un juego con todas sus estructuras validas.
+*	Precondiciones: Debera recibir un juego con todas sus estructuras validas y un torres_t con los valores maximos iniciales.
 *	Postcondiciones: Creara un nuevo defensor en la posicion que eliga el usuario.
 */
 void crear_defensor(juego_t *juego, int n_def, torres_t maximos){
@@ -563,7 +567,7 @@ void crear_defensor(juego_t *juego, int n_def, torres_t maximos){
 }
 
 /*
-*	Precondiciones: Sea un nivel valido (1,2,3,4) y un camino valido.
+*	Precondiciones: Sea un nivel valido (1,2,3,4) y un camino valido y una configuracion valida.
 *	Postcondiciones: Pondra los defensores en donde el usuario lo decida, siempre y cuando sea posible.
 */
 void poner_defensores(juego_t *juego, configuracion_t config){
@@ -632,7 +636,7 @@ void inicializar_enemigos(juego_t *juego){
 }
 
 /*
-*	Precondiciones: Debe recibir un juego con un nivel valido (1,2,3,4).
+*	Precondiciones: Debe recibir un juego con un nivel valido (1,2,3,4), una configuracion valida y un archivo de caminos valido.
 *	Postcondiciones: Iniciara el nivel correspondiente.
 */
 void iniciar_nivel(juego_t *juego, configuracion_t config, FILE** arch_camino){
@@ -681,7 +685,7 @@ void elegir_si_no(int opcion_actual, bool *entro_a_menu, bool *quiere_defensor){
 }
 
 /*
-*	Precondiciones: Debe recibir un juego con todas sus estructuras validas.
+*	Precondiciones: Debe recibir un juego con todas sus estructuras validas, una configuracion valida y un torres_t con los valores maximos iniciales.
 *	Postcondiciones: Mostrara el menu para elegir si o no.
 */
 void actualizar_menu_si_no(juego_t juego, int *opcion_actual, torres_t maximos, configuracion_t config){
@@ -717,7 +721,7 @@ void actualizar_menu_si_no(juego_t juego, int *opcion_actual, torres_t maximos, 
 }
 
 /*
-*	Precondiciones: Debe recibir un juego con todas sus estructuras validas.
+*	Precondiciones: Debe recibir un juego con todas sus estructuras validas, una configuracion valida y un torres_t con los valores maximos iniciales.
 *	Postcondiciones: Modificara el valor de quiere_defensor segun si el usuario quiere o no (true si quiere, false si no).
 */
 void preguntar_si_quiere_defensor(juego_t juego, bool *quiere_defensor, torres_t maximos, configuracion_t config){
@@ -740,7 +744,7 @@ void preguntar_si_quiere_defensor(juego_t juego, bool *quiere_defensor, torres_t
 }
 
 /*
-*	Precondiciones: Debe recibir una opcion valida (0 (Enano) o 1 (Elfo))
+*	Precondiciones: Debe recibir una opcion valida (0 (Enano) o 1 (Elfo)).
 *	Postcondiciones: Confirmara el tipo de defensor elegido por el usuario.
 */
 void confirmar_tipo(int opcion_actual, bool *entro_a_menu, char *tipo_defensor){
@@ -754,7 +758,7 @@ void confirmar_tipo(int opcion_actual, bool *entro_a_menu, char *tipo_defensor){
 }
 
 /*
-*	Precondiciones: Debe recibir un juego con todas sus estructuras validas.
+*	Precondiciones: Debe recibir un juego con todas sus estructuras validas, una configuracion valida y un torres_t con los valores maximos iniciales.
 *	Postcondiciones: Mostrara el menu de seleccion del tipo de defensor.
 */
 void actualizar_menu_tipo(juego_t juego, int *opcion_actual, torres_t maximos, configuracion_t config){
@@ -779,7 +783,7 @@ void actualizar_menu_tipo(juego_t juego, int *opcion_actual, torres_t maximos, c
 }
 
 /*
-*	Precondiciones: Debe recibir un juego con todas sus estructuras validas.
+*	Precondiciones: Debe recibir un juego con todas sus estructuras validas, una configuracion valida y un torres_t con los valores maximos iniciales.
 *	Postcondiciones: Modificara el tipo de defensor por el elegido por el usuario.
 */
 void obtener_tipo_defensor(juego_t juego, char *tipo_defensor, torres_t maximos, configuracion_t config){
@@ -808,7 +812,7 @@ void obtener_tipo_defensor(juego_t juego, char *tipo_defensor, torres_t maximos,
 }
 
 /*
-*	Precondiciones: Debe recibir un juego con todas sus estructuras validas y un tipo de defensor valido (Enano o Elfo).
+*	Precondiciones: Debe recibir un juego con todas sus estructuras validas y un tipo de defensor valido (Enano o Elfo) y una configuracion valida.
 *	Postcondiciones: Descontara la resistencia que ocasiona crear un defensor nuevo a la torre 1 o 2 segun corresponda.
 */
 void descontar_resistencia_torres(juego_t *juego, char tipo_defensor, configuracion_t config){
@@ -834,7 +838,7 @@ void descontar_un_defensor_extra(juego_t *juego, char tipo_defensor){
 }
 
 /*
-*	Precondiciones: Debe recibir un juego con todas sus estructuras validas.
+*	Precondiciones: Debe recibir un juego con todas sus estructuras validas y una configuracion valida.
 *	Postcondiciones: Ubicara un nuevo defensor si el usuario lo quiere.
 */
 void poner_nuevo_defensor(juego_t *juego, configuracion_t config){
@@ -860,7 +864,7 @@ void poner_nuevo_defensor(juego_t *juego, configuracion_t config){
 /************************************************************************************* Pasar al siguiente nivel **************************************************************************************/
 
 /*
-*	Precondiciones: Debe recibir un juego con todas sus estructuras validas.
+*	Precondiciones: Debe recibir un juego con todas sus estructuras validas, una configuracion valida y un archivo de caminos valido.
 *	Postcondiciones: Pasara al siguiente nivel con todos sus valores inicializados.
 */
 void pasar_al_siguiente_nivel(juego_t *juego, configuracion_t config, FILE** arch_camino){
@@ -923,12 +927,20 @@ void mostrar_que_perdio(){
 	printf(AMARILLO"	   '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''\n");
 }
 
+/*
+*	Precondiciones: Debe recibir una configuracion valida, y una cantidad de orcos muertos valida (Mayor a 0).
+*	Postcondiciones: Devolvera el puntaje obtenido en el juego.
+*/
 int puntaje_segun_jugada(configuracion_t config, int orcos_muertos){
 	int numerador = orcos_muertos * 1000;
 	int denominador = config.resistencia_torres[0] + config.resistencia_torres[1] + config.enanos_inicio[0] + config.enanos_inicio[1] + config.enanos_inicio[2] + config.enanos_inicio[3] + config.elfos_inicio[0] + config.elfos_inicio[1] + config.elfos_inicio[2] + config.elfos_inicio[3] + config.enanos_extra[0] + config.elfos_extra[0];
 	return (numerador / denominador);
 }
 
+/*
+*	Precondiciones: Debe recibir un puntaje valido, una ruta valida y un nombre del jugador valido.
+*	Postcondiciones: Escribira en el archivo encontrado en la ruta especificada el puntaje obtenido por el jugador.
+*/
 void escribir_archivo_puntaje(int puntaje, char ruta_ranking[MAX_RUTA], char nombre_jugador[MAX_NOMBRE]){
 
 		FILE* ranking_viejo = fopen(ruta_ranking, "r");
@@ -939,6 +951,10 @@ void escribir_archivo_puntaje(int puntaje, char ruta_ranking[MAX_RUTA], char nom
 			return;
 		}
 		FILE* ranking_act = fopen("temp_ranking.csv", "w");
+		if(!ranking_act){
+			printf("ERROR -> No puedo escribir este archivo\n");
+			return;
+		}
 		char nom_leyendo[MAX_NOMBRE];
 		int punt_leyendo;
 		int leidos = fscanf(ranking_viejo, FORMATO_RANKING, nom_leyendo, &punt_leyendo);
@@ -972,6 +988,10 @@ void escribir_archivo_puntaje(int puntaje, char ruta_ranking[MAX_RUTA], char nom
 		fclose(ranking_act);
 }
 
+/*
+*	Precondiciones: Debe recibir un puntaje valido y un nombre de configuracion y de jugador validos.
+*	Postcondiciones: Escribira en la ruta formada por el nombre de la configuracion, el puntaje del jugador.
+*/
 void escribir_puntaje(int puntaje, char nombre_config[MAX_NOMBRE], char nombre_jugador[MAX_NOMBRE]){
 	char ruta_ranking[MAX_RUTA];
 	strcpy(ruta_ranking, RANKING);
@@ -986,6 +1006,9 @@ void escribir_puntaje(int puntaje, char nombre_config[MAX_NOMBRE], char nombre_j
 	}
 }
 
+/*
+*	Postcondiciones: Modificara el nombre por el ingresado por el jugador.
+*/
 void pedir_nombre(char nombre_jugador[MAX_NOMBRE]){
 	printf(AMARILLO"                                       ╔═══════════════════════════════════╗\n");
 	printf(AMARILLO"                                       ║           FIN DEL JUEGO           ║\n");
@@ -998,7 +1021,7 @@ void pedir_nombre(char nombre_jugador[MAX_NOMBRE]){
 
 /*
 *	Precondiciones: Debe recibir un juego con todas sus estructuras validas.
-*	Postcondiciones: Mostrara si la pantalla final de victoria o derrota segun el caso.
+*	Postcondiciones: Finalizara el juego, escribiendo el ranking y mostrando la pantalla final de victoria o derrota segun el caso.
 */
 void finalizar_juego(juego_t juego, configuracion_t config, char nombre_config[MAX_NOMBRE]){
 	if(estado_juego(juego) == JUEGO_GANADO){
@@ -1036,19 +1059,9 @@ void finalizar_juego(juego_t juego, configuracion_t config, char nombre_config[M
 /********************************************************************************************** Jugar juego ******************************************************************************************/
 
 /*
-* Precondiciones: Debe recibir argumentos del main cuyo segundo argumento sea jugar.
-* Postcondiciones: Modificara la posicion del comando de la grabacion y/o de la configuracion en caso de que se haya ingresado.
+*	Precondiciones: Debe recibir un archivo valido (en caso de estar abierto).
+* Postcondiciones: Llenara la configuracion con la leida en el archivo.
 */
-void revisar_comandos_jugar(int *pos_rec, int *pos_config, char * argv[], int argc){
-  for(int i = 2; i < argc; i++){
-    if(strncmp(argv[i],"grabacion=",10) == 0){
-      *pos_rec = i;
-    }else if(strncmp(argv[i],"config=",7) == 0){
-      *pos_config = i;
-    }
-  }
-}
-
 void llenar_config(configuracion_t *config, FILE** arch_config){
   if(!*arch_config){
     config -> resistencia_torres[0] = VIDA_INICIAL_TORRES;
@@ -1152,6 +1165,10 @@ void llenar_config(configuracion_t *config, FILE** arch_config){
   }
 }
 
+/*
+*	Precondiciones: Debe recibir una ruta valida.
+*	Postcondiciones: Modificara el nombre de la configuracion por el obtenido con la ruta.
+*/
 void copiar_nombre_config(char nombre_config[MAX_NOMBRE], char ruta[MAX_RUTA]){
 	char *nombre;
 	nombre = strtok(ruta,".");
@@ -1162,6 +1179,10 @@ void copiar_nombre_config(char nombre_config[MAX_NOMBRE], char ruta[MAX_RUTA]){
 	}
 }
 
+/*
+* Precondiciones: Debe recibir una configuracion valida.
+*	Postcondiciones: Modificara los valores del viento, humedad y animos a -1 en caso de ser necesario que se modifiquen en animos().
+*/
 void cargar_animos_necesarios(int *viento, int *humedad, char *animo_legolas, char *animo_gimli, configuracion_t config){
 	if(config.animo_enanos[0] == -1){
 		*humedad = -1;
