@@ -496,17 +496,12 @@ void pasar_repeticion(float velocidad, char ruta_grabacion[MAX_RUTA]){
   }
   mostrar_introduccion_repeticion();
   fread(&repeticion, sizeof(juego_t), 1, arch_repeticion);
-  FILE* temp_max = fopen("temp_max.dat", "w");
-  if(!temp_max){
-    return;
-  }
-  fwrite(&repeticion.torres,sizeof(torres_t),1,temp_max);
-  fclose(temp_max);
+  torres_t maximos = repeticion.torres;
   while(!feof(arch_repeticion)){
     if(comenzo_nuevo_nivel(repeticion)){
       mostrar_introduccion_nivel_rep(repeticion.nivel_actual);
     }
-    mostrar_juego(repeticion);
+    mostrar_juego(repeticion, maximos);
     detener_el_tiempo(velocidad);
     fread(&repeticion, sizeof(juego_t), 1, arch_repeticion);
   }

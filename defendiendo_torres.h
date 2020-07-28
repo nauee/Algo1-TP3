@@ -107,6 +107,6 @@ void jugar_turno(juego_t* juego);
 /*
  * Mostrará el mapa dependiendo del nivel en que se encuentra el jugador.
  */
-void mostrar_juego(juego_t juego);
+void mostrar_juego(juego_t juego, torres_t maximos_inicio);
 
 #endif /* __DEFENDIENDO_TORRES_H__ */

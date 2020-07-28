@@ -512,11 +512,11 @@ void mostrar_vida(juego_t juego, torres_t maximos){
 	printf(""AMARILLO"║ Vida Torre 1:  "BLANCO"");
 
 	for(int i = 0; i < 30;i++){
-		if((i*(maximos.resistencia_torre_1/30)) < (juego.torres.resistencia_torre_1) && (juego.torres.resistencia_torre_1 >= (maximos.resistencia_torre_1 / 15))){
+		if(((i*(maximos.resistencia_torre_1/30)) < (juego.torres.resistencia_torre_1)) && (juego.torres.resistencia_torre_1 >= ((maximos.resistencia_torre_1 * 10 ) / 15))){
 			printf(""VERDE"▒");
-		}else if((i*(maximos.resistencia_torre_1/30)) < (juego.torres.resistencia_torre_1) && (juego.torres.resistencia_torre_1 >= (maximos.resistencia_torre_1 / 30))){
+		}else if(((i*(maximos.resistencia_torre_1/30)) < (juego.torres.resistencia_torre_1)) && (juego.torres.resistencia_torre_1 >= ((maximos.resistencia_torre_1 * 10) / 30))){
 			printf(""AMARILLO"▒");
-		}else if((i*(maximos.resistencia_torre_1/30)) < (juego.torres.resistencia_torre_1) && (juego.torres.resistencia_torre_1 > MINIMO_MALA_RESI)){
+		}else if(((i*(maximos.resistencia_torre_1/30)) < (juego.torres.resistencia_torre_1)) && (juego.torres.resistencia_torre_1 > MINIMO_MALA_RESI)){
 			printf(""ROJO"▒");
 		}else if(juego.torres.resistencia_torre_1 <= SIN_RESISTENCIA){
 			printf(""ROJO"░");
@@ -559,9 +559,9 @@ void mostrar_vida(juego_t juego, torres_t maximos){
 			}
 		}else if(maximos.resistencia_torre_1 < 10 && maximos.resistencia_torre_1 > 0){
 			if(juego.torres.resistencia_torre_1 > 0){
-				printf("      %i/%i  "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
+				printf("    %i/%i    "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
 			}else{
-				printf("       0/%i  "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_1);
+				printf("     0/%i    "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_1);
 			}
 		}
 		printf(""AMARILLO"╠═════════════════════════════════════════════════════════╣"BLANCO"\n");
@@ -599,9 +599,9 @@ void mostrar_vida(juego_t juego, torres_t maximos){
 			}
 		}else if(maximos.resistencia_torre_1 < 10 && maximos.resistencia_torre_1 > 0){
 			if(juego.torres.resistencia_torre_1 > 0){
-				printf("      %i/%i                 "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
+				printf("    %i/%i                   "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_1, maximos.resistencia_torre_1);
 			}else{
-				printf("       0/%i                 "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_1);
+				printf("     0/%i                   "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_1);
 			}
 		}
 		printf(""AMARILLO"╠════════════════════════════════════════════════════════════════════════╣"BLANCO"\n");
@@ -657,9 +657,9 @@ void mostrar_vida(juego_t juego, torres_t maximos){
 			}
 		}else if(maximos.resistencia_torre_2 < 10 && maximos.resistencia_torre_2 > 0){
 			if(juego.torres.resistencia_torre_2 > 0){
-				printf("      %i/%i  "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
+				printf("    %i/%i    "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
 			}else{
-				printf("       0/%i  "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_2);
+				printf("     0/%i    "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_2);
 			}
 		}
 		printf(""AMARILLO"╠═════════════════════════════════════════════════════════╣"BLANCO"\n");
@@ -697,9 +697,9 @@ void mostrar_vida(juego_t juego, torres_t maximos){
 			}
 		}else if(maximos.resistencia_torre_2 < 10 && maximos.resistencia_torre_2 > 0){
 			if(juego.torres.resistencia_torre_2 > 0){
-				printf("      %i/%i                 "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
+				printf("    %i/%i                   "AMARILLO"║"BLANCO"\n", juego.torres.resistencia_torre_2, maximos.resistencia_torre_2);
 			}else{
-				printf("       0/%i                 "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_2);
+				printf("     0/%i                   "AMARILLO"║"BLANCO"\n", maximos.resistencia_torre_2);
 			}
 		}
 		printf(""AMARILLO"╠════════════════════════════════════════════════════════════════════════╣"BLANCO"\n");
@@ -739,16 +739,8 @@ void mostrar_defensores_extra(juego_t juego, torres_t maximos){
 	}
 }
 
-void mostrar_juego(juego_t juego){
+void mostrar_juego(juego_t juego, torres_t maximos_inicio){
 	system("clear");
-	torres_t maximos;
-	FILE* temp_max = fopen("temp_max.dat", "r");
-	if(!temp_max){
-		return;
-	}
-	fread(&maximos,sizeof(torres_t),1,temp_max);
-	fclose(temp_max);
-
 	char tablero[MAX_FILAS][MAX_COLUMNAS];
 	int tope_tablero = 0;
 	if(juego.nivel_actual == NIVEL_1){
@@ -765,8 +757,8 @@ void mostrar_juego(juego_t juego){
 	dibujar_defensores(tablero, juego.nivel);
 	dibujar_enemigos(tablero, juego);
 	mostrar_tablero(tablero, tope_tablero);
-	mostrar_vida(juego, maximos);
-	mostrar_defensores_extra(juego, maximos);
+	mostrar_vida(juego, maximos_inicio);
+	mostrar_defensores_extra(juego, maximos_inicio);
 }
 
 /*****************************************************************************************************************************************************************************************************/

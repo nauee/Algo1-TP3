@@ -513,9 +513,9 @@ void eligio_posicion(nivel_t *nivel, int n_def, bool *eligio_pos){
 *	Precondiciones: Debera recibir un juego con todas sus estructuras validas.
 *	Postcondiciones: Mostrara por pantalla el juego mientras se esta ubicando al defensor.
 */
-void mostrar_modificado(juego_t *juego){
+void mostrar_modificado(juego_t *juego, torres_t maximos){
 	juego -> nivel.tope_defensores ++;
-	mostrar_juego(*juego);
+	mostrar_juego(*juego, maximos);
 	printf(AMARILLO" -> Movimiento con WASD\n");
 	printf(AMARILLO" -> Selecciona con ESPACIO\n");
 	juego -> nivel.tope_defensores --;
@@ -525,7 +525,7 @@ void mostrar_modificado(juego_t *juego){
 *	Precondiciones: Debera recibir un juego con todas sus estructuras validas.
 *	Postcondiciones: Creara un nuevo defensor en la posicion que eliga el usuario.
 */
-void crear_defensor(juego_t *juego, int n_def){
+void crear_defensor(juego_t *juego, int n_def, torres_t maximos){
 
 	int tope_mov;
 	if(juego -> nivel_actual == NIVEL_1 || juego -> nivel_actual == NIVEL_2){
@@ -537,29 +537,29 @@ void crear_defensor(juego_t *juego, int n_def){
 	juego -> nivel.defensores[n_def].posicion.col = POS_MIN;
 	int tecla_pulsada;
 	bool eligio_pos = false;
-	mostrar_modificado(juego);
+	mostrar_modificado(juego, maximos);
 	while(!eligio_pos){
 		tecla_pulsada = getch();
 		if(tecla_pulsada == ARRIBA_MAY || tecla_pulsada == ARRIBA_MIN){
 			if(es_posible_moverse(juego -> nivel.defensores[n_def].posicion, tecla_pulsada, tope_mov)){
 				(juego -> nivel.defensores[n_def].posicion.fil) --;
 			}
-			mostrar_modificado(juego);
+			mostrar_modificado(juego, maximos);
 		}else if(tecla_pulsada == ABAJO_MAY || tecla_pulsada == ABAJO_MIN){
 			if(es_posible_moverse(juego -> nivel.defensores[n_def].posicion, tecla_pulsada, tope_mov)){
 				(juego -> nivel.defensores[n_def].posicion.fil) ++;
 			}
-			mostrar_modificado(juego);
+			mostrar_modificado(juego, maximos);
 		}else if(tecla_pulsada == IZQUIERDA_MAY || tecla_pulsada == IZQUIERDA_MIN){
 			if(es_posible_moverse(juego -> nivel.defensores[n_def].posicion, tecla_pulsada, tope_mov)){
 				(juego -> nivel.defensores[n_def].posicion.col) --;
 			}
-			mostrar_modificado(juego);
+			mostrar_modificado(juego, maximos);
 		}else if(tecla_pulsada == DERECHA_MAY || tecla_pulsada == DERECHA_MIN){
 			if(es_posible_moverse(juego -> nivel.defensores[n_def].posicion, tecla_pulsada, tope_mov)){
 				(juego -> nivel.defensores[n_def].posicion.col) ++;
 			}
-			mostrar_modificado(juego);
+			mostrar_modificado(juego, maximos);
 		}else if(tecla_pulsada == BARRA_ESPAC){
 			eligio_posicion(&(juego -> nivel), n_def, &eligio_pos);
 		}
@@ -572,42 +572,47 @@ void crear_defensor(juego_t *juego, int n_def){
 */
 void poner_defensores(juego_t *juego, configuracion_t config){
 	system("clear");
+	torres_t maximos;
+	maximos.resistencia_torre_1 = config.resistencia_torres[0];
+	maximos.resistencia_torre_2 = config.resistencia_torres[1];
+	maximos.enanos_extra = config.enanos_extra[0];
+	maximos.elfos_extra = config.elfos_extra[0];
 	juego -> nivel.tope_defensores = NINGUN_DEFENSOR;
 	if(juego -> nivel_actual == NIVEL_1){
 		for(int i = 0; i < config.enanos_inicio[0]; i++){
 			juego -> nivel.defensores[i].tipo = ENANOS;
-			crear_defensor(juego, i);
+			crear_defensor(juego, i, maximos);
 		}
     for(int i = config.enanos_inicio[0]; i < config.enanos_inicio[0] + config.elfos_inicio[0]; i++){
       juego -> nivel.defensores[i].tipo = ELFOS;
-			crear_defensor(juego, i);
+			crear_defensor(juego, i, maximos);
     }
 	}else if(juego -> nivel_actual == NIVEL_2){
     for(int i = 0; i < config.enanos_inicio[1]; i++){
 			juego -> nivel.defensores[i].tipo = ENANOS;
-			crear_defensor(juego, i);
+			crear_defensor(juego, i, maximos);
 		}
     for(int i = config.enanos_inicio[1]; i < config.enanos_inicio[1] + config.elfos_inicio[1]; i++){
       juego -> nivel.defensores[i].tipo = ELFOS;
-			crear_defensor(juego, i);
+			crear_defensor(juego, i, maximos);
     }
 	}else if(juego -> nivel_actual == NIVEL_3){
     for(int i = 0; i < config.enanos_inicio[2]; i++){
 			juego -> nivel.defensores[i].tipo = ENANOS;
-			crear_defensor(juego, i);
+			crear_defensor(juego, i, maximos);
 		}
     for(int i = config.enanos_inicio[2]; i < config.enanos_inicio[2] + config.elfos_inicio[2]; i++){
       juego -> nivel.defensores[i].tipo = ELFOS;
-			crear_defensor(juego, i);
+			crear_defensor(juego, i, maximos);
     }
 	}else{
     for(int i = 0; i < config.enanos_inicio[3]; i++){
 			juego -> nivel.defensores[i].tipo = ENANOS;
-			crear_defensor(juego, i);
+			crear_defensor(juego, i, maximos);
 		}
     for(int i = config.enanos_inicio[3]; i < config.enanos_inicio[3] + config.elfos_inicio[3]; i++){
       juego -> nivel.defensores[i].tipo = ELFOS;
-			crear_defensor(juego, i);
+			crear_defensor(juego, i, maximos);
     }
 	}
 }
@@ -683,7 +688,7 @@ void elegir_si_no(int opcion_actual, bool *entro_a_menu, bool *quiere_defensor){
 *	Precondiciones: Debe recibir un juego con todas sus estructuras validas.
 *	Postcondiciones: Mostrara el menu para elegir si o no.
 */
-void actualizar_menu_si_no(juego_t juego, int *opcion_actual){
+void actualizar_menu_si_no(juego_t juego, int *opcion_actual, torres_t maximos, configuracion_t config){
 	if(*opcion_actual == OP_SI - 1){
 		*opcion_actual = OP_NO;
 	}else if(*opcion_actual == OP_NO + 1){
@@ -691,25 +696,16 @@ void actualizar_menu_si_no(juego_t juego, int *opcion_actual){
 	}
 	system("clear");
 
-	mostrar_juego(juego);
-
-	if(juego.nivel_actual == NIVEL_1){
-		printf(""AMARILLO" -> Tenes disponible un enano extra para ubicar, esto te costara 50 puntos de resistencia a la Torre 1 "VERDE"\n");
-		printf(""AMARILLO" -> Quieres poner un enano extra?\n");
-	}else if(juego.nivel_actual == NIVEL_2){
-		printf(""AMARILLO" -> Tenes disponible un elfo extra para ubicar, esto te costara 50 puntos de resistencia a la Torre 2 "VERDE"\n");
-		printf(""AMARILLO" -> Quieres poner un elfo extra?\n");
-	}else{
-		if(juego.torres.enanos_extra > 0 && juego.torres.elfos_extra > 0){
-			printf(""AMARILLO" -> Tenes disponible un enano o un elfo extra para ubicar, esto te costara 50 puntos de resistencia a la torre 1 o 2 respectivamente"VERDE"\n");
+	mostrar_juego(juego, maximos);
+	if(juego.torres.enanos_extra > 0 && juego.torres.elfos_extra > 0){
+			printf(""AMARILLO" -> Tenes disponible un enano o un elfo extra para ubicar"VERDE"\n");
 			printf(""AMARILLO" -> Quieres poner un defensor extra?\n");
 		}else if(juego.torres.enanos_extra > 0){
-			printf(""AMARILLO" -> Tenes disponible un enano extra para ubicar, esto te costara 50 puntos de resistencia a la Torre 1 "VERDE"\n");
-			printf(""AMARILLO" -> Quieres poner un enano extra?\n");
+			printf(""AMARILLO" -> Tenes disponible un enano extra para ubicar"VERDE"\n");
+			printf(""AMARILLO" -> Quieres poner un enano extra? (Costo -> Torre 1 : %i Torre 2 : %i)\n", config.enanos_extra[1], config.enanos_extra[2]);
 		}else{
-			printf(""AMARILLO" -> Tenes disponible un elfo extra para ubicar, esto te costara 50 puntos de resistencia a la Torre 2 "VERDE"\n");
-			printf(""AMARILLO" -> Quieres poner un elfo extra?\n");
-		}
+			printf(""AMARILLO" -> Tenes disponible un elfo extra para ubicar"VERDE"\n");
+			printf(""AMARILLO" -> Quieres poner un elfo extra? (Costo -> Torre 1 : %i Torre 2 : %i)\n", config.elfos_extra[1], config.elfos_extra[2]);
 	}
 
 	if(*opcion_actual == OP_SI){
@@ -728,19 +724,19 @@ void actualizar_menu_si_no(juego_t juego, int *opcion_actual){
 *	Precondiciones: Debe recibir un juego con todas sus estructuras validas.
 *	Postcondiciones: Modificara el valor de quiere_defensor segun si el usuario quiere o no (true si quiere, false si no).
 */
-void preguntar_si_quiere_defensor(juego_t juego, bool *quiere_defensor){
+void preguntar_si_quiere_defensor(juego_t juego, bool *quiere_defensor, torres_t maximos, configuracion_t config){
 	int opcion_actual = OP_SI;
 	int tecla_pulsada;
 	bool entro_a_menu = false;
-	actualizar_menu_si_no(juego, &opcion_actual);
+	actualizar_menu_si_no(juego, &opcion_actual, maximos, config);
 	while(!entro_a_menu){
 		tecla_pulsada = getch();
 		if(tecla_pulsada == ARRIBA_MAY || tecla_pulsada == ARRIBA_MIN){
 			opcion_actual --;
-			actualizar_menu_si_no(juego, &opcion_actual);
+			actualizar_menu_si_no(juego, &opcion_actual, maximos, config);
 		}else if(tecla_pulsada == ABAJO_MAY || tecla_pulsada == ABAJO_MIN){
 			opcion_actual ++;
-			actualizar_menu_si_no(juego, &opcion_actual);
+			actualizar_menu_si_no(juego, &opcion_actual, maximos, config);
 		}else if(tecla_pulsada == ENTER){
 			elegir_si_no(opcion_actual,&entro_a_menu,quiere_defensor);
 		}
@@ -765,24 +761,24 @@ void confirmar_tipo(int opcion_actual, bool *entro_a_menu, char *tipo_defensor){
 *	Precondiciones: Debe recibir un juego con todas sus estructuras validas.
 *	Postcondiciones: Mostrara el menu de seleccion del tipo de defensor.
 */
-void actualizar_menu_tipo(juego_t juego, int *opcion_actual){
+void actualizar_menu_tipo(juego_t juego, int *opcion_actual, torres_t maximos, configuracion_t config){
 	if(*opcion_actual == OP_ENANOS - 1){
 		*opcion_actual = OP_ELFOS;
 	}else if(*opcion_actual == OP_ELFOS + 1){
 		*opcion_actual = OP_ENANOS;
 	}
 	system("clear");
-	mostrar_juego(juego);
+	mostrar_juego(juego, maximos);
 	printf(""AMARILLO" -> Quieres un enano o un elfo extra?\n");
 	if(*opcion_actual == OP_ENANOS){
-		printf(AMARILLO" -> Enano\n");
+		printf(AMARILLO" -> Enano (Costo -> Torre 1 : %i Torre 2 : %i)\n", config.enanos_extra[1], config.enanos_extra[2]);
 	}else{
-		printf(AMARILLO"    Enano\n");
+		printf(AMARILLO"    Enano (Costo -> Torre 1 : %i Torre 2 : %i)\n", config.enanos_extra[1], config.enanos_extra[2]);
 	}
 	if(*opcion_actual == OP_ELFOS){
-		printf(AMARILLO" -> Elfo\n");
+		printf(AMARILLO" -> Elfo (Costo -> Torre 1 : %i Torre 2 : %i)\n", config.elfos_extra[1], config.elfos_extra[2]);
 	}else{
-		printf(AMARILLO"    Elfo\n");
+		printf(AMARILLO"    Elfo (Costo -> Torre 1 : %i Torre 2 : %i)\n", config.elfos_extra[1], config.elfos_extra[2]);
 	}
 }
 
@@ -790,34 +786,28 @@ void actualizar_menu_tipo(juego_t juego, int *opcion_actual){
 *	Precondiciones: Debe recibir un juego con todas sus estructuras validas.
 *	Postcondiciones: Modificara el tipo de defensor por el elegido por el usuario.
 */
-void obterner_tipo_defensor(juego_t juego, char *tipo_defensor){
+void obtener_tipo_defensor(juego_t juego, char *tipo_defensor, torres_t maximos, configuracion_t config){
 	int opcion_actual = OP_ENANOS;
 	int tecla_pulsada;
 	bool entro_a_menu = false;
-	if(juego.nivel_actual == NIVEL_1){
-		*tipo_defensor = ENANOS;
-	}else if(juego.nivel_actual == NIVEL_2){
-		*tipo_defensor = ELFOS;
-	}else if(juego.nivel_actual == NIVEL_3 || juego.nivel_actual == NIVEL_4){
-		if(juego.torres.enanos_extra > NINGUN_ENANO_EXTRA && juego.torres.elfos_extra > NINGUN_ELFO_EXTRA){
-			actualizar_menu_tipo(juego, &opcion_actual);
-			while(!entro_a_menu){
-				tecla_pulsada = getch();
-				if(tecla_pulsada == ARRIBA_MAY || tecla_pulsada == ARRIBA_MIN){
-					opcion_actual --;
-					actualizar_menu_tipo(juego, &opcion_actual);
-				}else if(tecla_pulsada == ABAJO_MAY || tecla_pulsada == ABAJO_MIN){
-					opcion_actual ++;
-					actualizar_menu_tipo(juego, &opcion_actual);
-				}else if(tecla_pulsada == ENTER){
-					confirmar_tipo(opcion_actual,&entro_a_menu,tipo_defensor);
-				}
+	if(juego.torres.enanos_extra > NINGUN_ENANO_EXTRA && juego.torres.elfos_extra > NINGUN_ELFO_EXTRA){
+		actualizar_menu_tipo(juego, &opcion_actual, maximos, config);
+		while(!entro_a_menu){
+			tecla_pulsada = getch();
+			if(tecla_pulsada == ARRIBA_MAY || tecla_pulsada == ARRIBA_MIN){
+				opcion_actual --;
+				actualizar_menu_tipo(juego, &opcion_actual, maximos, config);
+			}else if(tecla_pulsada == ABAJO_MAY || tecla_pulsada == ABAJO_MIN){
+				opcion_actual ++;
+				actualizar_menu_tipo(juego, &opcion_actual, maximos, config);
+			}else if(tecla_pulsada == ENTER){
+				confirmar_tipo(opcion_actual,&entro_a_menu,tipo_defensor);
 			}
-		}else if(juego.torres.enanos_extra > NINGUN_ENANO_EXTRA){
-			*tipo_defensor = ENANOS;
-		}else{
-			*tipo_defensor = ELFOS;
 		}
+	}else if(juego.torres.enanos_extra > NINGUN_ENANO_EXTRA){
+		*tipo_defensor = ENANOS;
+	}else{
+		*tipo_defensor = ELFOS;
 	}
 }
 
@@ -825,11 +815,13 @@ void obterner_tipo_defensor(juego_t juego, char *tipo_defensor){
 *	Precondiciones: Debe recibir un juego con todas sus estructuras validas y un tipo de defensor valido (Enano o Elfo).
 *	Postcondiciones: Descontara la resistencia que ocasiona crear un defensor nuevo a la torre 1 o 2 segun corresponda.
 */
-void descontar_resistencia_torres(juego_t *juego, char tipo_defensor){
+void descontar_resistencia_torres(juego_t *juego, char tipo_defensor, configuracion_t config){
 	if(tipo_defensor == ENANOS){
-		juego -> torres.resistencia_torre_1 -= COSTO_DEF_EXTRA;
+		juego -> torres.resistencia_torre_1 -= config.enanos_extra[1];
+		juego -> torres.resistencia_torre_2 -= config.enanos_extra[2];
 	}else{
-		juego -> torres.resistencia_torre_2 -= COSTO_DEF_EXTRA;
+		juego -> torres.resistencia_torre_1 -= config.elfos_extra[1];
+		juego -> torres.resistencia_torre_2 -= config.elfos_extra[2];
 	}
 }
 
@@ -849,16 +841,21 @@ void descontar_un_defensor_extra(juego_t *juego, char tipo_defensor){
 *	Precondiciones: Debe recibir un juego con todas sus estructuras validas.
 *	Postcondiciones: Ubicara un nuevo defensor si el usuario lo quiere.
 */
-void poner_nuevo_defensor(juego_t *juego){
+void poner_nuevo_defensor(juego_t *juego, configuracion_t config){
+	torres_t maximos;
+	maximos.resistencia_torre_1 = config.resistencia_torres[0];
+	maximos.resistencia_torre_2 = config.resistencia_torres[1];
+	maximos.enanos_extra = config.enanos_extra[0];
+	maximos.elfos_extra = config.elfos_extra[0];
 	if(es_posible_poner_nuevo_defensor(*juego)){
 		bool quiere_defensor;
 		char tipo_defensor;
-		preguntar_si_quiere_defensor(*juego, &quiere_defensor);
+		preguntar_si_quiere_defensor(*juego, &quiere_defensor, maximos, config);
 		if(quiere_defensor){
-			obterner_tipo_defensor(*juego, &tipo_defensor);
+			obtener_tipo_defensor(*juego, &tipo_defensor, maximos, config);
 			juego -> nivel.defensores[juego -> nivel.tope_defensores].tipo = tipo_defensor;
-			crear_defensor(juego, juego -> nivel.tope_defensores);
-			descontar_resistencia_torres(juego, tipo_defensor);
+			crear_defensor(juego, juego -> nivel.tope_defensores, maximos);
+			descontar_resistencia_torres(juego, tipo_defensor, config);
 			descontar_un_defensor_extra(juego, tipo_defensor);
 		}
 	}
@@ -871,9 +868,14 @@ void poner_nuevo_defensor(juego_t *juego){
 *	Postcondiciones: Pasara al siguiente nivel con todos sus valores inicializados.
 */
 void pasar_al_siguiente_nivel(juego_t *juego, configuracion_t config, FILE** arch_camino){
+	torres_t maximos;
+	maximos.resistencia_torre_1 = config.resistencia_torres[0];
+	maximos.resistencia_torre_2 = config.resistencia_torres[1];
+	maximos.enanos_extra = config.enanos_extra[0];
+	maximos.elfos_extra = config.elfos_extra[0];
 	(juego -> nivel_actual) ++;
 	iniciar_nivel(juego, config, arch_camino);
-	mostrar_juego(*juego);
+	mostrar_juego(*juego, maximos);
 }
 
 /****************************************************************************************** Finalizar juego ******************************************************************************************/
@@ -1194,9 +1196,10 @@ void cargar_animos_necesarios(int *viento, int *humedad, char *animo_legolas, ch
 */
 void jugar_juego(char ruta_config[MAX_RUTA], char ruta_grabacion[MAX_RUTA]){
   configuracion_t config;
-  FILE* arch_config;
   FILE* arch_grabacion;
-	char nombre_config[MAX_NOMBRE] = STR_POR_DEFECTO;
+	FILE* arch_config;
+	char nombre_config[MAX_NOMBRE];
+	strcpy(nombre_config, STR_POR_DEFECTO);
 	if(strcmp(ruta_config, STR_POR_DEFECTO) != 0){
 		arch_config = fopen(ruta_config, "r");
 		if(arch_config){
@@ -1221,26 +1224,20 @@ void jugar_juego(char ruta_config[MAX_RUTA], char ruta_grabacion[MAX_RUTA]){
 	cargar_animos_necesarios(&viento,&humedad,&animo_legolas,&animo_gimli,config);
   animos(&viento,&humedad,&animo_legolas,&animo_gimli);
   inicializar_juego(&juego, viento, humedad, animo_legolas,animo_gimli,config);
-	FILE* temp_max = fopen("temp_max.dat", "w");
-	if(!temp_max){
-		return;
-	}
-	fwrite(&juego.torres,sizeof(torres_t),1,temp_max);
-	fclose(temp_max);
-
+	torres_t maximos = juego.torres;
   FILE* arch_camino;
   if(strcmp(config.caminos, STR_POR_DEFECTO) != 0){
     arch_camino = fopen(config.caminos, "r");
   }
   iniciar_nivel(&juego, config, &arch_camino);
-  mostrar_juego(juego);
+  mostrar_juego(juego, maximos);
   while (estado_juego(juego) == JUEGO_JUGANDO){
     if(estado_nivel(juego.nivel) == NIVEL_GANADO){
       pasar_al_siguiente_nivel(&juego, config, &arch_camino);
     }else if(estado_nivel(juego.nivel) == NIVEL_JUGANDO){
       jugar_turno(&juego);
-      mostrar_juego(juego);
-      poner_nuevo_defensor(&juego);
+      mostrar_juego(juego,maximos);
+      poner_nuevo_defensor(&juego, config);
       if(arch_grabacion){
         fwrite(&juego,sizeof(juego_t),1,arch_grabacion);
       }
