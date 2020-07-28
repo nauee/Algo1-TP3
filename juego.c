@@ -1076,66 +1076,81 @@ void llenar_config(configuracion_t *config, FILE** arch_config){
     config -> velocidad_de_juego = VEL_NORMAL;
     strcpy(config -> caminos, STR_POR_DEFECTO);
   }else{
-    fscanf(*arch_config, "RESISTENCIA_TORRES=%i,%i\n", &(config -> resistencia_torres[0]), &(config -> resistencia_torres[1]));
-    if(config -> resistencia_torres[0] == POR_DEFECTO){
-      config -> resistencia_torres[0] = VIDA_INICIAL_TORRES;
-    }
-    if(config -> resistencia_torres[1] == POR_DEFECTO){
-      config -> resistencia_torres[1] = VIDA_INICIAL_TORRES;
-    }
-    fscanf(*arch_config, "ENANOS_INICIO=%i,%i,%i,%i\n", &(config -> enanos_inicio[0]), &(config -> enanos_inicio[1]), &(config -> enanos_inicio[2]), &(config -> enanos_inicio[3]));
-    if(config -> enanos_inicio[0] == POR_DEFECTO){
-      config -> enanos_inicio[0] = CANT_DEFENSORES_1;
-    }
-    if(config -> enanos_inicio[1] == POR_DEFECTO){
-      config -> enanos_inicio[1] = NINGUN_DEFENSOR;
-    }
-    if(config -> enanos_inicio[2] == POR_DEFECTO){
-      config -> enanos_inicio[2] = CANT_DEFENSORES_3 / 2;
-    }
-    if(config -> enanos_inicio[3] == POR_DEFECTO){
-      config -> enanos_inicio[3] = CANT_DEFENSORES_4 / 2;
-    }
-    fscanf(*arch_config, "ELFOS_INICIO=%i,%i,%i,%i\n", &(config -> elfos_inicio[0]), &(config -> elfos_inicio[1]), &(config -> elfos_inicio[2]), &(config -> elfos_inicio[3]));
-    if(config -> elfos_inicio[0] == POR_DEFECTO){
-      config -> elfos_inicio[0] = NINGUN_DEFENSOR;
-    }
-    if(config -> elfos_inicio[1] == POR_DEFECTO){
-      config -> elfos_inicio[1] = CANT_DEFENSORES_2;
-    }
-    if(config -> elfos_inicio[2] == POR_DEFECTO){
-      config -> elfos_inicio[2] = CANT_DEFENSORES_3 / 2;
-    }
-    if(config -> elfos_inicio[3] == POR_DEFECTO){
-      config -> elfos_inicio[3] = CANT_DEFENSORES_4 / 2;
-    }
-    fscanf(*arch_config, "ENANOS_EXTRA=%i,%i,%i\n", &(config -> enanos_extra[0]), &(config -> enanos_extra[1]), &(config -> enanos_extra[2]));
-    if(config -> enanos_extra[0] == POR_DEFECTO){
-      config -> enanos_extra[0] = ENANOS_EXTRA;
-    }
-    if(config -> enanos_extra[1] == POR_DEFECTO){
-      config -> enanos_extra[1] = COSTO_DEF_EXTRA;
-    }
-    if(config -> enanos_extra[2] == POR_DEFECTO){
-      config -> enanos_extra[2] = SIN_COSTO;
-    }
-    fscanf(*arch_config, "ELFOS_EXTRA=%i,%i,%i\n", &(config -> elfos_extra[0]), &(config -> elfos_extra[1]), &(config -> elfos_extra[2]));
-    if(config -> elfos_extra[0] == POR_DEFECTO){
-      config -> elfos_extra[0] = ENANOS_EXTRA;
-    }
-    if(config -> elfos_extra[1] == POR_DEFECTO){
-      config -> elfos_extra[1] = SIN_COSTO;
-    }
-    if(config -> elfos_extra[2] == POR_DEFECTO){
-      config -> elfos_extra[2] = COSTO_DEF_EXTRA;
-    }
-    fscanf(*arch_config, "ENANOS_ANIMO=%i,%i\n", &(config -> animo_enanos[0]), &(config -> animo_enanos[1]));
-    fscanf(*arch_config, "ELFOS_ANIMO=%i,%i\n", &(config -> animo_elfos[0]), &(config -> animo_elfos[1]));
-    fscanf(*arch_config, "VELOCIDAD=%f\n", &(config -> velocidad_de_juego));
-    if(config -> velocidad_de_juego == POR_DEFECTO){
-      config -> velocidad_de_juego = VEL_NORMAL;
-    }
-    fscanf(*arch_config, "CAMINOS=%s\n", config -> caminos);
+		char indicador[MAX_NOMBRE];
+		int leidos = fscanf(*arch_config,"%[^=]=", indicador);
+		while(leidos != EOF){
+			if(strcmp(indicador, "RESISTENCIA_TORRES") == 0){
+				fscanf(*arch_config,"%i,%i\n", &(config -> resistencia_torres[0]), &(config -> resistencia_torres[1]));
+		    if(config -> resistencia_torres[0] == POR_DEFECTO){
+		      config -> resistencia_torres[0] = VIDA_INICIAL_TORRES;
+		    }
+		    if(config -> resistencia_torres[1] == POR_DEFECTO){
+		      config -> resistencia_torres[1] = VIDA_INICIAL_TORRES;
+		    }
+			}else if(strcmp(indicador, "ENANOS_INICIO") == 0){
+				fscanf(*arch_config, "%i,%i,%i,%i\n", &(config -> enanos_inicio[0]), &(config -> enanos_inicio[1]), &(config -> enanos_inicio[2]), &(config -> enanos_inicio[3]));
+		    if(config -> enanos_inicio[0] == POR_DEFECTO){
+		      config -> enanos_inicio[0] = CANT_DEFENSORES_1;
+		    }
+		    if(config -> enanos_inicio[1] == POR_DEFECTO){
+		      config -> enanos_inicio[1] = NINGUN_DEFENSOR;
+		    }
+		    if(config -> enanos_inicio[2] == POR_DEFECTO){
+		      config -> enanos_inicio[2] = CANT_DEFENSORES_3 / 2;
+		    }
+		    if(config -> enanos_inicio[3] == POR_DEFECTO){
+		      config -> enanos_inicio[3] = CANT_DEFENSORES_4 / 2;
+		    }
+			}else if(strcmp(indicador, "ELFOS_INICIO") == 0){
+				fscanf(*arch_config, "%i,%i,%i,%i\n", &(config -> elfos_inicio[0]), &(config -> elfos_inicio[1]), &(config -> elfos_inicio[2]), &(config -> elfos_inicio[3]));
+		    if(config -> elfos_inicio[0] == POR_DEFECTO){
+		      config -> elfos_inicio[0] = NINGUN_DEFENSOR;
+		    }
+		    if(config -> elfos_inicio[1] == POR_DEFECTO){
+		      config -> elfos_inicio[1] = CANT_DEFENSORES_2;
+		    }
+		    if(config -> elfos_inicio[2] == POR_DEFECTO){
+		      config -> elfos_inicio[2] = CANT_DEFENSORES_3 / 2;
+		    }
+		    if(config -> elfos_inicio[3] == POR_DEFECTO){
+		      config -> elfos_inicio[3] = CANT_DEFENSORES_4 / 2;
+		    }
+			}else if(strcmp(indicador, "ENANOS_EXTRA") == 0){
+				fscanf(*arch_config, "%i,%i,%i\n", &(config -> enanos_extra[0]), &(config -> enanos_extra[1]), &(config -> enanos_extra[2]));
+		    if(config -> enanos_extra[0] == POR_DEFECTO){
+		      config -> enanos_extra[0] = ENANOS_EXTRA;
+		    }
+		    if(config -> enanos_extra[1] == POR_DEFECTO){
+		      config -> enanos_extra[1] = COSTO_DEF_EXTRA;
+		    }
+		    if(config -> enanos_extra[2] == POR_DEFECTO){
+		      config -> enanos_extra[2] = SIN_COSTO;
+		    }
+			}else if(strcmp(indicador, "ELFOS_EXTRA") == 0){
+				fscanf(*arch_config, "%i,%i,%i\n", &(config -> elfos_extra[0]), &(config -> elfos_extra[1]), &(config -> elfos_extra[2]));
+		    if(config -> elfos_extra[0] == POR_DEFECTO){
+		      config -> elfos_extra[0] = ENANOS_EXTRA;
+		    }
+		    if(config -> elfos_extra[1] == POR_DEFECTO){
+		      config -> elfos_extra[1] = SIN_COSTO;
+		    }
+		    if(config -> elfos_extra[2] == POR_DEFECTO){
+		      config -> elfos_extra[2] = COSTO_DEF_EXTRA;
+		    }
+			}else if(strcmp(indicador, "ENANOS_ANIMO") == 0){
+				fscanf(*arch_config, "%i,%i\n", &(config -> animo_enanos[0]), &(config -> animo_enanos[1]));
+			}else if(strcmp(indicador, "ELFOS_ANIMO") == 0){
+		    fscanf(*arch_config, "%i,%i\n", &(config -> animo_elfos[0]), &(config -> animo_elfos[1]));
+			}else if(strcmp(indicador, "VELOCIDAD") == 0){
+				fscanf(*arch_config, "%f\n", &(config -> velocidad_de_juego));
+		    if(config -> velocidad_de_juego == POR_DEFECTO){
+		      config -> velocidad_de_juego = VEL_NORMAL;
+		    }
+			}else if(strcmp(indicador, "CAMINOS") == 0){
+				fscanf(*arch_config, "%[^\n]\n", config -> caminos);
+			}
+			leidos = fscanf(*arch_config,"%[^=]=", indicador);
+		}
   }
 }
 
@@ -1182,7 +1197,6 @@ void jugar_juego(char ruta_config[MAX_RUTA], char ruta_grabacion[MAX_RUTA]){
   FILE* arch_config;
   FILE* arch_grabacion;
 	char nombre_config[MAX_NOMBRE] = STR_POR_DEFECTO;
-	printf("%s\n", ruta_grabacion);
 	if(strcmp(ruta_config, STR_POR_DEFECTO) != 0){
 		arch_config = fopen(ruta_config, "r");
 		if(arch_config){
