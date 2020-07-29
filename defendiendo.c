@@ -100,8 +100,8 @@ void encontrar_valores_ranking(int *cantidad_rank, char ruta_ranking[MAX_RUTA], 
     eliminar_extension(nombre_config);
     strcat(ruta_ranking, "_");
     strcat(ruta_ranking, nombre_config);
-    strcat(ruta_ranking, CSV);
-  }
+	}
+	strcat(ruta_ranking, CSV);
   if(pos_cantidad != -1){
     char cantidad_cadena[MAX_RUTA];
     eliminar_indicador(cantidad_cadena,argv[pos_cantidad],7);

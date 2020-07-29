@@ -467,11 +467,7 @@ void mostrar_tablero(char tablero[MAX_FILAS][MAX_COLUMNAS], int tope){
 		printf(""AMARILLO"║     ╔════════════════════════════════════════════════════════════╗     ║"BLANCO"\n");
 	}
 	for(int i = 0; i < tope; i++){
-		if(i < 10){
-			printf(""AMARILLO"║    %i║"BLANCO"",i);
-		}else{
-			printf(""AMARILLO"║   %i║"BLANCO"",i);
-		}
+		printf(""AMARILLO"║   %2d║"BLANCO"",i);
 		for(int j = 0; j < tope; j++){
 			if(tablero[i][j] == CAMINO){
 				printf (" "MARRON"■"BLANCO" ");
@@ -483,11 +479,7 @@ void mostrar_tablero(char tablero[MAX_FILAS][MAX_COLUMNAS], int tope){
 				printf(" "AZUL"%c"BLANCO" ",tablero[i][j]);
 			}
 		}
-		if(i < 10){
-			printf(""AMARILLO"║%i    ║"BLANCO"\n",i);
-		}else{
-			printf(""AMARILLO"║%i   ║"BLANCO"\n",i);
-		}
+		printf(""AMARILLO"║%-2d   ║"BLANCO"\n",i);
 	}
 	if(tope == TAMANIO_TABLERO_1 || tope == TAMANIO_TABLERO_2){
 		printf(""AMARILLO"║     ╚═════════════════════════════════════════════╝     ║"BLANCO"\n");

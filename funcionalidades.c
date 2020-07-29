@@ -32,11 +32,16 @@
 #define POR_DEFECTO -1
 #define CAM_POR_DEFECTO "-1"
 #define MAX_NOMBRE_PORCENTAJE 10
+#define MAX_PARAMETRO 50
 #define RANKING "ranking"
 #define CSV ".csv"
 #define FORMATO_RANKING "%[^;];%i\n"
 #define MAX_NOMBRE 50
 #define STR_POR_DEFECTO "-1"
+#define TAMANIO_TABLERO_1 15
+#define TAMANIO_TABLERO_2 15
+#define TAMANIO_TABLERO_3 20
+#define TAMANIO_TABLERO_4 20
 static const char ARRIBA_MAY = 'W';
 static const char ARRIBA_MIN = 'w';
 static const char ABAJO_MAY = 'S';
@@ -54,6 +59,15 @@ static const int POS_MAX_3_4 = 19;
 static const char PASTO = '~';
 static const char CAMINO = 'C';
 const char BACKSPACE = 127;
+
+void poner_espacios_segun_nombre(char nombre[MAX_NOMBRE]){
+  int largo_nombre = (int)strlen(nombre);
+  for(int i = 0; i < (MAX_NOMBRE - largo_nombre); i++){
+    printf(" ");
+  }
+  printf(AMARILLO"║\n");
+}
+
 
 /**************************************************************************************** Detectar tecla pulsada *************************************************************************************/
 
@@ -583,12 +597,49 @@ void inicializar_creador(char creador[MAX_FILAS][MAX_COLUMNAS], int tope){
 }
 
 /*
-* Precondiciones: Debe recibir una matriz de creador valido y su respectivo tope.
+* Precondiciones: Debe recibir una matriz de creador valido, su respectivo tope y un numero de camino valido (0,1,2,3,4,5).
 * Postcondiciones: Mostrara por pantalla el creador.
 */
-void mostrar_creador(char creador[MAX_FILAS][MAX_COLUMNAS], int tope){
+void mostrar_creador(char creador[MAX_FILAS][MAX_COLUMNAS], int tope, int n_camino){
   system("clear");
+  int nivel = 1;
+  int camino = 1;
+  if(n_camino == 0){
+    nivel = 1;
+    camino = 1;
+  }else if(n_camino == 1){
+    nivel = 2;
+    camino = 2;
+  }else if(n_camino == 2){
+    nivel = 3;
+    camino = 1;
+  }else if(n_camino == 3){
+    nivel = 3;
+    camino = 2;
+  }else if(n_camino == 4){
+    nivel = 4;
+    camino = 1;
+  }else{
+    nivel = 4;
+    camino = 2;
+  }
+
+
+  if(tope == TAMANIO_TABLERO_1 || tope == TAMANIO_TABLERO_2){
+    printf(AMARILLO"╔═════════════════════════════════════════════════════════╗"BLANCO"\n");
+    printf(AMARILLO"║                                                         ║"BLANCO"\n");
+    printf(AMARILLO"║       0  1  2  3  4  5  6  7  8  9  10 11 12 13 14      ║"BLANCO"\n");
+    printf(AMARILLO"║     ╔═════════════════════════════════════════════╗     ║"BLANCO"\n");
+
+  }else if(tope == TAMANIO_TABLERO_3 || tope == TAMANIO_TABLERO_4){
+    printf(AMARILLO"╔════════════════════════════════════════════════════════════════════════╗"BLANCO"\n");
+    printf(AMARILLO"║                                                                        ║"BLANCO"\n");
+    printf(AMARILLO"║       0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19      ║"BLANCO"\n");
+    printf(AMARILLO"║     ╔════════════════════════════════════════════════════════════╗     ║"BLANCO"\n");
+  }
+
   for (int i = 0; i < tope; i++){
+    printf(AMARILLO"║   %2d║"BLANCO"",i);
     for(int j = 0; j < tope; j++){
       if(creador[i][j] == CAMINO){
         printf (MARRON" ■ ");
@@ -596,11 +647,34 @@ void mostrar_creador(char creador[MAX_FILAS][MAX_COLUMNAS], int tope){
 				printf(VERDE" %c ",creador[i][j]);
 			}
     }
-    printf("\n");
+    printf(AMARILLO"║%-2d   ║"BLANCO"\n",i);
   }
-  printf("Movimiento con WASD\n");
-  printf("Puedes borrar si con BACKSPACE\n");
-  printf("Para finalizar el camino pulsa ESPACIO (Recorda que los caminos van de lado a lado)\n");
+  if(tope == TAMANIO_TABLERO_1 || tope == TAMANIO_TABLERO_2){
+		printf(AMARILLO"║     ╚═════════════════════════════════════════════╝     ║"BLANCO"\n");
+		printf(AMARILLO"║       0  1  2  3  4  5  6  7  8  9  10 11 12 13 14      ║"BLANCO"\n");
+		printf(AMARILLO"║                                                         ║"BLANCO"\n");
+		printf(AMARILLO"╠═════════════════════════════════════════════════════════╣"BLANCO"\n");
+    printf(AMARILLO"║ Movimiento con WASD                                     ║"BLANCO"\n");
+    printf(AMARILLO"║ Puedes borrar si con BACKSPACE                          ║"BLANCO"\n");
+    printf(AMARILLO"║ Para finalizar el camino pulsa ESPACIO                  ║"BLANCO"\n");
+    printf(AMARILLO"║ (Recorda que los caminos van de lado a lado)            ║"BLANCO"\n");
+    printf(AMARILLO"╠═════════════════════════════════════════════════════════╣"BLANCO"\n");
+    printf(AMARILLO"║   Nivel = %i                                Camino = %i   ║"BLANCO"\n",nivel, camino);
+    printf(AMARILLO"╚═════════════════════════════════════════════════════════╝"BLANCO"\n");
+	}else if(tope == TAMANIO_TABLERO_3 || tope == TAMANIO_TABLERO_4){
+		printf(AMARILLO"║     ╚════════════════════════════════════════════════════════════╝     ║"BLANCO"\n");
+		printf(AMARILLO"║       0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19      ║"BLANCO"\n");
+		printf(AMARILLO"║                                                                        ║"BLANCO"\n");
+		printf(AMARILLO"╠════════════════════════════════════════════════════════════════════════╣"BLANCO"\n");
+    printf(AMARILLO"║ Movimiento con WASD                                                    ║"BLANCO"\n");
+    printf(AMARILLO"║ Puedes borrar si con BACKSPACE                                         ║"BLANCO"\n");
+    printf(AMARILLO"║ Para finalizar el camino pulsa ESPACIO                                 ║"BLANCO"\n");
+    printf(AMARILLO"║ (Recorda que los caminos van de lado a lado)                           ║"BLANCO"\n");
+    printf(AMARILLO"╠════════════════════════════════════════════════════════════════════════╣"BLANCO"\n");
+    printf(AMARILLO"║   Nivel = %i                                               Camino = %i   ║"BLANCO"\n",nivel, camino);
+    printf(AMARILLO"╚════════════════════════════════════════════════════════════════════════╝"BLANCO"\n");
+	}
+
 }
 
 /*
@@ -624,8 +698,8 @@ void determinar_entrada(char creador[MAX_FILAS][MAX_COLUMNAS], int n_camino, coo
     pos_actual -> col = 0;
   }
   creador[pos_actual -> fil][pos_actual -> col] = CAMINO;
-  mostrar_creador(creador,tope_mov + 1);
-  printf("Primero selecciona la posicion donde se encontrara tu entrada (ESPACIO)\n");
+  mostrar_creador(creador,tope_mov + 1, n_camino);
+  printf(AMARILLO"  Primero selecciona la posicion donde se \n  Encontrara tu entrada (ESPACIO)\n");
   if(n_camino == 0 || n_camino == 1){
     creador[pos_actual -> fil][pos_actual -> col] = CAMINO;
     while(!eligio_entrada){
@@ -636,16 +710,16 @@ void determinar_entrada(char creador[MAX_FILAS][MAX_COLUMNAS], int n_camino, coo
           pos_actual -> fil --;
           creador[pos_actual -> fil][pos_actual -> col] = CAMINO;
   			}
-        mostrar_creador(creador,tope_mov + 1);
-        printf("Primero selecciona la posicion donde se encontrara tu entrada (ESPACIO)\n");
+        mostrar_creador(creador,tope_mov + 1, n_camino);
+        printf(AMARILLO"  Primero selecciona la posicion donde se \n  Encontrara tu entrada (ESPACIO)\n");
   		}else if(tecla_pulsada == ABAJO_MAY || tecla_pulsada == ABAJO_MIN){
   			if(es_posible_moverse(*pos_actual, tecla_pulsada, tope_mov)){
           creador[pos_actual -> fil][pos_actual -> col] = PASTO;
           pos_actual -> fil ++;
           creador[pos_actual -> fil][pos_actual -> col] = CAMINO;
   			}
-        mostrar_creador(creador,tope_mov + 1);
-        printf("Primero selecciona la posicion donde se encontrara tu entrada (ESPACIO)\n");
+        mostrar_creador(creador,tope_mov + 1, n_camino);
+        printf(AMARILLO"  Primero selecciona la posicion donde se \n  Encontrara tu entrada (ESPACIO)\n");
   		}else if(tecla_pulsada == BARRA_ESPAC){
   			eligio_entrada = true;
   		}
@@ -661,8 +735,8 @@ void determinar_entrada(char creador[MAX_FILAS][MAX_COLUMNAS], int n_camino, coo
           pos_actual -> col --;
           creador[pos_actual -> fil][pos_actual -> col] = CAMINO;
   			}
-        mostrar_creador(creador,tope_mov + 1);
-        printf("Primero selecciona la posicion donde se encontrara tu entrada (ESPACIO)\n");
+        mostrar_creador(creador,tope_mov + 1, n_camino);
+        printf(AMARILLO"  Primero selecciona la posicion donde se \n  Encontrara tu entrada (ESPACIO)\n");
   		}else if(tecla_pulsada == DERECHA_MAY || tecla_pulsada == DERECHA_MIN){
   			if(es_posible_moverse(*pos_actual, tecla_pulsada, tope_mov)){
           if(!(pertenece_al_camino(camino_1, tope_camino_1, *pos_actual))){
@@ -671,8 +745,8 @@ void determinar_entrada(char creador[MAX_FILAS][MAX_COLUMNAS], int n_camino, coo
           pos_actual -> col ++;
           creador[pos_actual -> fil][pos_actual -> col] = CAMINO;
   			}
-        mostrar_creador(creador,tope_mov + 1);
-        printf("Primero selecciona la posicion donde se encontrara tu entrada (ESPACIO)\n");
+        mostrar_creador(creador,tope_mov + 1, n_camino);
+        printf(AMARILLO"  Primero selecciona la posicion donde se \n  Encontrara tu entrada (ESPACIO)\n");
   		}else if(tecla_pulsada == BARRA_ESPAC){
   			eligio_entrada = true;
   		}
@@ -718,7 +792,7 @@ void crear_camino_wasd(coordenada_t camino_1[MAX_LONGITUD_CAMINO], coordenada_t 
   }
   inicializar_creador(creador, tope_mov + 1);
   dibujar_otro_camino(creador, camino_1, *tope_camino_1);
-  mostrar_creador(creador,tope_mov + 1);
+  mostrar_creador(creador,tope_mov + 1, n_camino);
   int tecla_pulsada;
   coordenada_t pos_actual;
   while(!eligio_camino){
@@ -728,40 +802,40 @@ void crear_camino_wasd(coordenada_t camino_1[MAX_LONGITUD_CAMINO], coordenada_t 
       camino[tope_camino] = pos_actual;
       (tope_camino) ++;
       creador[pos_actual.fil][pos_actual.col] = CAMINO;
-      mostrar_creador(creador,tope_mov + 1);
+      mostrar_creador(creador,tope_mov + 1, n_camino);
     }else{
       if(tecla_pulsada == ARRIBA_MAY || tecla_pulsada == ARRIBA_MIN){
-  			if(es_posible_moverse(pos_actual, tecla_pulsada, tope_mov) && pos_actual.fil -1 != camino[tope_camino - 2].fil && tope_camino < 200){
+  			if(es_posible_moverse(pos_actual, tecla_pulsada, tope_mov) && pos_actual.fil -1 != camino[tope_camino - 2].fil && tope_camino < MAX_LONGITUD_CAMINO){
           pos_actual.fil --;
           camino[tope_camino] = pos_actual;
           creador[pos_actual.fil][pos_actual.col] = CAMINO;
           (tope_camino) ++;
   			}
-        mostrar_creador(creador,tope_mov + 1);
+        mostrar_creador(creador,tope_mov + 1, n_camino);
   		}else if(tecla_pulsada == ABAJO_MAY || tecla_pulsada == ABAJO_MIN){
-  			if(es_posible_moverse(pos_actual, tecla_pulsada, tope_mov) && pos_actual.fil +1 != camino[tope_camino - 2].fil && tope_camino < 200){
+  			if(es_posible_moverse(pos_actual, tecla_pulsada, tope_mov) && pos_actual.fil +1 != camino[tope_camino - 2].fil && tope_camino < MAX_LONGITUD_CAMINO){
           pos_actual.fil ++;
           camino[tope_camino] = pos_actual;
           creador[pos_actual.fil][pos_actual.col] = CAMINO;
           (tope_camino) ++;
   			}
-        mostrar_creador(creador,tope_mov + 1);
+        mostrar_creador(creador,tope_mov + 1, n_camino);
   		}else if(tecla_pulsada == IZQUIERDA_MAY || tecla_pulsada == IZQUIERDA_MIN){
-  			if(es_posible_moverse(pos_actual, tecla_pulsada, tope_mov) && pos_actual.col -1 != camino[tope_camino - 2].col && tope_camino < 200){
+  			if(es_posible_moverse(pos_actual, tecla_pulsada, tope_mov) && pos_actual.col -1 != camino[tope_camino - 2].col && tope_camino < MAX_LONGITUD_CAMINO){
           pos_actual.col --;
           camino[tope_camino] = pos_actual;
           creador[pos_actual.fil][pos_actual.col] = CAMINO;
           (tope_camino) ++;
   			}
-        mostrar_creador(creador,tope_mov + 1);
+        mostrar_creador(creador,tope_mov + 1, n_camino);
   		}else if(tecla_pulsada == DERECHA_MAY || tecla_pulsada == DERECHA_MIN){
-  			if(es_posible_moverse(pos_actual, tecla_pulsada, tope_mov) && pos_actual.col +1 != camino[tope_camino - 2].col && tope_camino < 200){
+  			if(es_posible_moverse(pos_actual, tecla_pulsada, tope_mov) && pos_actual.col +1 != camino[tope_camino - 2].col && tope_camino < MAX_LONGITUD_CAMINO){
           pos_actual.col ++;
           camino[tope_camino] = pos_actual;
           creador[pos_actual.fil][pos_actual.col] = CAMINO;
           (tope_camino) ++;
   			}
-        mostrar_creador(creador,tope_mov + 1);
+        mostrar_creador(creador,tope_mov + 1, n_camino);
   		}else if(tecla_pulsada == BACKSPACE){
         (tope_camino) --;
         if(pertenece_al_camino(camino_1, *tope_camino_1, pos_actual) || pertenece_al_camino(camino, tope_camino, pos_actual)){
@@ -771,7 +845,7 @@ void crear_camino_wasd(coordenada_t camino_1[MAX_LONGITUD_CAMINO], coordenada_t 
         }
         pos_actual.col = camino[tope_camino - 1].col;
         pos_actual.fil = camino[tope_camino - 1].fil;
-        mostrar_creador(creador,tope_mov + 1);
+        mostrar_creador(creador,tope_mov + 1, n_camino);
       }else if(tecla_pulsada == BARRA_ESPAC){
   			if(es_pos_torre_valida(n_camino, pos_actual)){
           if(n_camino == 0 || n_camino == 2 || n_camino == 4){
@@ -781,7 +855,7 @@ void crear_camino_wasd(coordenada_t camino_1[MAX_LONGITUD_CAMINO], coordenada_t 
           }
           eligio_camino = true;
         }else{
-          printf("NO podes terminar tu camino aqui\n");
+          printf(AMARILLO"  NO podes terminar tu camino aqui\n");
         }
       }
     }
@@ -902,154 +976,186 @@ void actualizar_config_menu(configuracion_t config, int *opcion_actual){
   }else if (*opcion_actual == 22){
     *opcion_actual = 0;
   }
+  printf(AMARILLO"\n\n           ╔════════════════════════════════════════════════════════════════╗"BLANCO"\n");
   if(*opcion_actual == 0 || *opcion_actual == 1){
-    printf(AMARILLO"-> Resistencia Torres\n");
+    printf(AMARILLO"           ║ -> Resistencia Torres                                          "AMARILLO"║\n");
   }else{
-    printf(AMARILLO"   Resistencia Torres\n");
+    printf(AMARILLO"           ║    Resistencia Torres                                          "AMARILLO"║\n");
   }
   if(*opcion_actual == 0){
-    printf(AMARILLO"   -> Resistencia Torre 1 = "VERDE"%i\n", config.resistencia_torres[0]);
+    printf(AMARILLO"           ║    -> Resistencia Torre 1 = "VERDE"%-4d", config.resistencia_torres[0]);
   }else{
-    printf(AMARILLO"      Resistencia Torre 1 = "VERDE"%i\n", config.resistencia_torres[0]);
+    printf(AMARILLO"           ║       Resistencia Torre 1 = "VERDE"%-4d", config.resistencia_torres[0]);
   }
+  poner_espacios_segun_nombre("Resistencia Torre 1");
   if(*opcion_actual == 1){
-    printf(AMARILLO"   -> Resistencia Torre 2 = "VERDE"%i\n", config.resistencia_torres[1]);
+    printf(AMARILLO"           ║    -> Resistencia Torre 2 = "VERDE"%-4d", config.resistencia_torres[1]);
   }else{
-    printf(AMARILLO"      Resistencia Torre 2 = "VERDE"%i\n", config.resistencia_torres[1]);
+    printf(AMARILLO"           ║       Resistencia Torre 2 = "VERDE"%-4d", config.resistencia_torres[1]);
   }
+  poner_espacios_segun_nombre("Resistencia Torre 2");
   if(*opcion_actual == 2 || *opcion_actual == 3 || *opcion_actual == 4 || *opcion_actual == 5){
-    printf(AMARILLO"-> Enanos Inicio\n");
+    printf(AMARILLO"           ║ -> Enanos Inicio                                               "AMARILLO"║\n");
   }else{
-    printf(AMARILLO"   Enanos Inicio\n");
+    printf(AMARILLO"           ║    Enanos Inicio                                               "AMARILLO"║\n");
   }
   if(*opcion_actual == 2){
-    printf(AMARILLO"   -> Nivel 1 = "VERDE"%i\n", config.enanos_inicio[0]);
+    printf(AMARILLO"           ║    -> Nivel 1 = "VERDE"%-4d", config.enanos_inicio[0]);
   }else{
-    printf(AMARILLO"      Nivel 1 = "VERDE"%i\n", config.enanos_inicio[0]);
+    printf(AMARILLO"           ║       Nivel 1 = "VERDE"%-4d", config.enanos_inicio[0]);
   }
+  poner_espacios_segun_nombre("Nivel 1");
   if(*opcion_actual == 3){
-    printf(AMARILLO"   -> Nivel 2 = "VERDE"%i\n", config.enanos_inicio[1]);
+    printf(AMARILLO"           ║    -> Nivel 2 = "VERDE"%-4d", config.enanos_inicio[1]);
   }else{
-    printf(AMARILLO"      Nivel 2 = "VERDE"%i\n", config.enanos_inicio[1]);
+    printf(AMARILLO"           ║       Nivel 2 = "VERDE"%-4d", config.enanos_inicio[1]);
   }
+  poner_espacios_segun_nombre("Nivel 2");
   if(*opcion_actual == 4){
-    printf(AMARILLO"   -> Nivel 3 = "VERDE"%i\n", config.enanos_inicio[2]);
+    printf(AMARILLO"           ║    -> Nivel 3 = "VERDE"%-4d", config.enanos_inicio[2]);
   }else{
-    printf(AMARILLO"      Nivel 3 = "VERDE"%i\n", config.enanos_inicio[2]);
+    printf(AMARILLO"           ║       Nivel 3 = "VERDE"%-4d", config.enanos_inicio[2]);
   }
+  poner_espacios_segun_nombre("Nivel 3");
   if(*opcion_actual == 5){
-    printf(AMARILLO"   -> Nivel 4 = "VERDE"%i\n", config.enanos_inicio[3]);
+    printf(AMARILLO"           ║    -> Nivel 4 = "VERDE"%-4d", config.enanos_inicio[3]);
   }else{
-    printf(AMARILLO"      Nivel 4 = "VERDE"%i\n", config.enanos_inicio[3]);
+    printf(AMARILLO"           ║       Nivel 4 = "VERDE"%-4d", config.enanos_inicio[3]);
   }
+  poner_espacios_segun_nombre("Nivel 4");
   if(*opcion_actual == 6 || *opcion_actual == 7 || *opcion_actual == 8 || *opcion_actual == 9){
-    printf(AMARILLO"-> Elfos Inicio\n");
+    printf(AMARILLO"           ║ -> Elfos Inicio                                                "AMARILLO"║\n");
   }else{
-    printf(AMARILLO"   Elfos Inicio\n");
+    printf(AMARILLO"           ║    Elfos Inicio                                                "AMARILLO"║\n");
   }
   if(*opcion_actual == 6){
-    printf(AMARILLO"   -> Nivel 1 = "VERDE"%i\n", config.elfos_inicio[0]);
+    printf(AMARILLO"           ║    -> Nivel 1 = "VERDE"%-4d", config.elfos_inicio[0]);
   }else{
-    printf(AMARILLO"      Nivel 1 = "VERDE"%i\n", config.elfos_inicio[0]);
+    printf(AMARILLO"           ║       Nivel 1 = "VERDE"%-4d", config.elfos_inicio[0]);
   }
+  poner_espacios_segun_nombre("Nivel 1");
   if(*opcion_actual == 7){
-    printf(AMARILLO"   -> Nivel 2 = "VERDE"%i\n", config.elfos_inicio[1]);
+    printf(AMARILLO"           ║    -> Nivel 2 = "VERDE"%-4d", config.elfos_inicio[1]);
   }else{
-    printf(AMARILLO"      Nivel 2 = "VERDE"%i\n", config.elfos_inicio[1]);
+    printf(AMARILLO"           ║       Nivel 2 = "VERDE"%-4d", config.elfos_inicio[1]);
   }
+  poner_espacios_segun_nombre("Nivel 2");
   if(*opcion_actual == 8){
-    printf(AMARILLO"   -> Nivel 3 = "VERDE"%i\n", config.elfos_inicio[2]);
+    printf(AMARILLO"           ║    -> Nivel 3 = "VERDE"%-4d", config.elfos_inicio[2]);
   }else{
-    printf(AMARILLO"      Nivel 3 = "VERDE"%i\n", config.elfos_inicio[2]);
+    printf(AMARILLO"           ║       Nivel 3 = "VERDE"%-4d", config.elfos_inicio[2]);
   }
+  poner_espacios_segun_nombre("Nivel 3");
   if(*opcion_actual == 9){
-    printf(AMARILLO"   -> Nivel 4 = "VERDE"%i\n", config.elfos_inicio[3]);
+    printf(AMARILLO"           ║    -> Nivel 4 = "VERDE"%-4d", config.elfos_inicio[3]);
   }else{
-    printf(AMARILLO"      Nivel 4 = "VERDE"%i\n", config.elfos_inicio[3]);
+    printf(AMARILLO"           ║       Nivel 4 = "VERDE"%-4d", config.elfos_inicio[3]);
   }
+  poner_espacios_segun_nombre("Nivel 4");
   if(*opcion_actual == 10 || *opcion_actual == 11 || *opcion_actual == 12){
-    printf(AMARILLO"-> Enanos Extra\n");
+    printf(AMARILLO"           ║ -> Enanos Extra                                                "AMARILLO"║\n");
   }else{
-    printf(AMARILLO"   Enanos Extra\n");
+    printf(AMARILLO"           ║    Enanos Extra                                                "AMARILLO"║\n");
   }
   if(*opcion_actual == 10){
-    printf(AMARILLO"   -> Cantidad = "VERDE"%i\n", config.enanos_extra[0]);
+    printf(AMARILLO"           ║    -> Cantidad = "VERDE"%-4d", config.enanos_extra[0]);
   }else{
-    printf(AMARILLO"      Cantidad = "VERDE"%i\n", config.enanos_extra[0]);
+    printf(AMARILLO"           ║       Cantidad = "VERDE"%-4d", config.enanos_extra[0]);
   }
+  poner_espacios_segun_nombre("Cantidad");
   if(*opcion_actual == 11){
-    printf(AMARILLO"   -> Costo Torre 1 = "VERDE"%i\n", config.enanos_extra[1]);
+    printf(AMARILLO"           ║    -> Costo Torre 1 = "VERDE"%-4d", config.enanos_extra[1]);
   }else{
-    printf(AMARILLO"      Costo Torre 1 = "VERDE"%i\n", config.enanos_extra[1]);
+    printf(AMARILLO"           ║       Costo Torre 1 = "VERDE"%-4d", config.enanos_extra[1]);
   }
+  poner_espacios_segun_nombre("Costo Torre 1");
   if(*opcion_actual == 12){
-    printf(AMARILLO"   -> Costo Torre 2 = "VERDE"%i\n", config.enanos_extra[2]);
+    printf(AMARILLO"           ║    -> Costo Torre 2 = "VERDE"%-4d", config.enanos_extra[2]);
   }else{
-    printf(AMARILLO"      Costo Torre 2 = "VERDE"%i\n", config.enanos_extra[2]);
+    printf(AMARILLO"           ║       Costo Torre 2 = "VERDE"%-4d", config.enanos_extra[2]);
   }
+  poner_espacios_segun_nombre("Costo Torre 2");
   if(*opcion_actual == 13 || *opcion_actual == 14 || *opcion_actual == 15){
-    printf(AMARILLO"-> Elfos Extra\n");
+    printf(AMARILLO"           ║ -> Elfos Extra                                                 "AMARILLO"║\n");
   }else{
-    printf(AMARILLO"   Elfos Extra\n");
+    printf(AMARILLO"           ║    Elfos Extra                                                 "AMARILLO"║\n");
   }
   if(*opcion_actual == 13){
-    printf(AMARILLO"   -> Cantidad = "VERDE"%i\n", config.elfos_extra[0]);
+    printf(AMARILLO"           ║    -> Cantidad = "VERDE"%-4d", config.elfos_extra[0]);
   }else{
-    printf(AMARILLO"      Cantidad = "VERDE"%i\n", config.elfos_extra[0]);
+    printf(AMARILLO"           ║       Cantidad = "VERDE"%-4d", config.elfos_extra[0]);
   }
+  poner_espacios_segun_nombre("Cantidad");
   if(*opcion_actual == 14){
-    printf(AMARILLO"   -> Costo Torre 1 = "VERDE"%i\n", config.elfos_extra[1]);
+    printf(AMARILLO"           ║    -> Costo Torre 1 = "VERDE"%-4d", config.elfos_extra[1]);
   }else{
-    printf(AMARILLO"      Costo Torre 1 = "VERDE"%i\n", config.elfos_extra[1]);
+    printf(AMARILLO"           ║       Costo Torre 1 = "VERDE"%-4d", config.elfos_extra[1]);
   }
+  poner_espacios_segun_nombre("Costo Torre 1");
   if(*opcion_actual == 15){
-    printf(AMARILLO"   -> Costo Torre 2 = "VERDE"%i\n", config.elfos_extra[2]);
+    printf(AMARILLO"           ║    -> Costo Torre 2 = "VERDE"%-4d", config.elfos_extra[2]);
   }else{
-    printf(AMARILLO"      Costo Torre 2 = "VERDE"%i\n", config.elfos_extra[2]);
+    printf(AMARILLO"           ║       Costo Torre 2 = "VERDE"%-4d", config.elfos_extra[2]);
   }
+  poner_espacios_segun_nombre("Costo Torre 2");
   if(*opcion_actual == 16 || *opcion_actual == 17){
-    printf(AMARILLO"-> Animo Enanos\n");
+    printf(AMARILLO"           ║ -> Animo Enanos                                                "AMARILLO"║\n");
   }else{
-    printf(AMARILLO"   Animo Enanos\n");
+    printf(AMARILLO"           ║    Animo Enanos                                                "AMARILLO"║\n");
   }
   if(*opcion_actual == 16){
-    printf(AMARILLO"   -> Porcentaje Fallo = "VERDE"%i\n", config.animo_enanos[0]);
+    printf(AMARILLO"           ║    -> Porcentaje Fallo = "VERDE"%-4d", config.animo_enanos[0]);
   }else{
-    printf(AMARILLO"      Porcentaje Fallo = "VERDE"%i\n", config.animo_enanos[0]);
+    printf(AMARILLO"           ║       Porcentaje Fallo = "VERDE"%-4d", config.animo_enanos[0]);
   }
+  poner_espacios_segun_nombre("Porcentaje Fallo");
   if(*opcion_actual == 17){
-    printf(AMARILLO"   -> Porcentaje Critico = "VERDE"%i\n", config.animo_enanos[1]);
+    printf(AMARILLO"           ║    -> Porcentaje Critico = "VERDE"%-4d", config.animo_enanos[1]);
   }else{
-    printf(AMARILLO"      Porcentaje Critico = "VERDE"%i\n", config.animo_enanos[1]);
+    printf(AMARILLO"           ║       Porcentaje Critico = "VERDE"%-4d", config.animo_enanos[1]);
   }
+  poner_espacios_segun_nombre("Porcentaje Critico");
   if(*opcion_actual == 18 || *opcion_actual == 19){
-    printf(AMARILLO"-> Animo Elfos\n");
+    printf(AMARILLO"           ║ -> Animo Elfos                                                 "AMARILLO"║\n");
   }else{
-    printf(AMARILLO"   Animo Elfos\n");
+    printf(AMARILLO"           ║    Animo Elfos                                                 "AMARILLO"║\n");
   }
   if(*opcion_actual == 18){
-    printf(AMARILLO"   -> Porcentaje Fallo = "VERDE"%i\n", config.animo_elfos[0]);
+    printf(AMARILLO"           ║    -> Porcentaje Fallo = "VERDE"%-4d", config.animo_elfos[0]);
   }else{
-    printf(AMARILLO"      Porcentaje Fallo = "VERDE"%i\n", config.animo_elfos[0]);
+    printf(AMARILLO"           ║       Porcentaje Fallo = "VERDE"%-4d", config.animo_elfos[0]);
   }
+  poner_espacios_segun_nombre("Porcentaje Fallo");
   if(*opcion_actual == 19){
-    printf(AMARILLO"   -> Porcentaje Critico = "VERDE"%i\n", config.animo_elfos[1]);
+    printf(AMARILLO"           ║    -> Porcentaje Critico = "VERDE"%-4d", config.animo_elfos[1]);
   }else{
-    printf(AMARILLO"      Porcentaje Critico = "VERDE"%i\n", config.animo_elfos[1]);
+    printf(AMARILLO"           ║       Porcentaje Critico = "VERDE"%-4d", config.animo_elfos[1]);
   }
+  poner_espacios_segun_nombre("Porcentaje Critico");
   if(*opcion_actual == 20){
-    printf(AMARILLO"-> Velocidad de Juego = "VERDE"%.3f\n", config.velocidad_de_juego);
+    if(config.velocidad_de_juego == -1){
+      printf(AMARILLO"           ║ -> Velocidad de Juego = "VERDE"-1                                     "AMARILLO"║\n");
+    }else{
+      printf(AMARILLO"           ║ -> Velocidad de Juego = "VERDE"%.3f                                  "AMARILLO"║\n", config.velocidad_de_juego);
+    }
   }else{
-    printf(AMARILLO"   Velocidad de Juego = "VERDE"%.3f\n", config.velocidad_de_juego);
+    if(config.velocidad_de_juego == -1){
+      printf(AMARILLO"           ║    Velocidad de Juego = "VERDE"-1                                     "AMARILLO"║\n");
+    }else{
+      printf(AMARILLO"           ║    Velocidad de Juego = "VERDE"%.3f                                  "AMARILLO"║\n", config.velocidad_de_juego);
+    }
   }
   if(*opcion_actual == 21){
-    printf(AMARILLO"-> Camino = "VERDE"%s\n", config.caminos);
+    printf(AMARILLO"           ║ -> Camino = "VERDE"%s ", config.caminos);
   }else{
-    printf(AMARILLO"   Camino = "VERDE"%s\n", config.caminos);
+    printf(AMARILLO"           ║    Camino = "VERDE"%s ", config.caminos);
   }
-  printf(AMARILLO"-> Para moverte por el menu : "VERDE"WASD\n");
-  printf(AMARILLO"-> Para modificar un valor: "VERDE"ESPACIO\n");
-  printf(AMARILLO"-> Para cerrar el configurador y guardar: "VERDE"F\n");
+  poner_espacios_segun_nombre(config.caminos);
+  printf(AMARILLO"           ╠════════════════════════════════════════════════════════════════╣"BLANCO"\n");
+  printf(AMARILLO"           ║ -> Para moverte por el menu : "VERDE"WASD                             "AMARILLO"║\n");
+  printf(AMARILLO"           ║ -> Para modificar un valor: "VERDE"ESPACIO                            "AMARILLO"║\n");
+  printf(AMARILLO"           ║ -> Para cerrar el configurador y guardar: "VERDE"F                    "AMARILLO"║\n");
+  printf(AMARILLO"           ╚════════════════════════════════════════════════════════════════╝"BLANCO"\n");
 }
 
 /*
@@ -1189,6 +1295,39 @@ void escribir_configuracion(FILE** archivo_config, configuracion_t config){
   fprintf(*archivo_config, "CAMINOS=%s\n", config.caminos);
 }
 
+/*
+* Postcondiones: Mostrara por pantalla la presentacion del editor de configuraciones.
+*/
+void presentacion_config_menu(){
+  system("clear");
+  printf(AMARILLO"\n\n           ╔════════════════════════════════════════════════════════════════╗"BLANCO"\n");
+  printf(AMARILLO"           ║                                                                ║"BLANCO"\n");
+  printf(AMARILLO"           ║                                                                ║"BLANCO"\n");
+  printf(AMARILLO"           ║             Bienvenido al editor de configuraciones            ║"BLANCO"\n");
+  printf(AMARILLO"           ║                                                                ║"BLANCO"\n");
+  printf(AMARILLO"           ║                                                                ║"BLANCO"\n");
+  printf(AMARILLO"           ╚════════════════════════════════════════════════════════════════╝"BLANCO"\n");
+  detener_el_tiempo(2);
+  system("clear");
+}
+
+/*
+* Postcondiones: Mostrara por pantalla que se termino de configurar.
+*/
+void mostrar_fin_configuracion(){
+  detener_el_tiempo(0.5);
+  system("clear");
+  printf(AMARILLO"\n\n           ╔════════════════════════════════════════════════════════════════╗"BLANCO"\n");
+  printf(AMARILLO"           ║                                                                ║"BLANCO"\n");
+  printf(AMARILLO"           ║                                                                ║"BLANCO"\n");
+  printf(AMARILLO"           ║                    SE HA GUARDADO CON EXITO                    ║"BLANCO"\n");
+  printf(AMARILLO"           ║                                                                ║"BLANCO"\n");
+  printf(AMARILLO"           ║                                                                ║"BLANCO"\n");
+  printf(AMARILLO"           ╚════════════════════════════════════════════════════════════════╝"BLANCO"\n");
+  detener_el_tiempo(2);
+  system("clear");
+}
+
 void crear_configuracion_personalizada(char ruta[MAX_RUTA]){
   FILE* arch_config = fopen(ruta, "w");
   if(!(arch_config)){
@@ -1200,6 +1339,7 @@ void crear_configuracion_personalizada(char ruta[MAX_RUTA]){
   int opcion_actual = 0;
   int tecla_pulsada;
   bool termino_de_configurar = false;
+  presentacion_config_menu();
   actualizar_config_menu(config, &opcion_actual);
   while(!termino_de_configurar){
     tecla_pulsada = getch();
@@ -1215,7 +1355,7 @@ void crear_configuracion_personalizada(char ruta[MAX_RUTA]){
     }else if(tecla_pulsada == LETRA_F_MAX || tecla_pulsada == LETRA_F_MIN){
       escribir_configuracion(&arch_config, config);
       termino_de_configurar = true;
-      printf("Se ha guardado con EXITO\n");
+      mostrar_fin_configuracion();
     }
   }
 }
@@ -1226,8 +1366,13 @@ void mostrar_ranking(int cantidad_rank, char ruta_ranking[MAX_RUTA]){
   system("clear");
   FILE* arch_ranking;
   arch_ranking = fopen(ruta_ranking, "r");
-    if(!arch_ranking && (strcmp(ruta_ranking, "ranking.csv") != 0)){
-      printf(AMARILLO"-> NO existe ese ranking, se mostrara el ranking con la configuracion DEFAULT\n");
+  if(!arch_ranking && (strcmp(ruta_ranking, "ranking.csv") != 0)){
+      printf(AMARILLO"\n\n               ╔═══════════════════════════════════════════════════════════════╗"BLANCO"\n");
+      printf(AMARILLO"               ║ NO existe ese ranking, se mostrara                            ║\n");
+      printf(AMARILLO"               ║ el ranking con la configuracion DEFAULT                       ║\n");
+      printf(AMARILLO"               ╚═══════════════════════════════════════════════════════════════╝"BLANCO"\n");
+      detener_el_tiempo(2);
+      system("clear");
       strcpy(ruta_ranking, "ranking.csv");
       arch_ranking = fopen(ruta_ranking, "r");
     }
@@ -1239,37 +1384,41 @@ void mostrar_ranking(int cantidad_rank, char ruta_ranking[MAX_RUTA]){
   int puntaje;
   int cantidad_leidos = 0;
   int leidos = fscanf(arch_ranking, FORMATO_RANKING, nombre, &puntaje);
+  printf(AMARILLO"\n\n               ╔═══════════════════════════════════════════════════════════════╗"BLANCO"\n");
   if(cantidad_rank == -1){
     while(leidos == 2){
       if(cantidad_leidos == 0){
-        printf(AMARILLO" 1) ");
+        printf(AMARILLO"               ║ 1) ");
       }else if(cantidad_leidos == 1){
-        printf(AMARILLO" 2) ");
+        printf(AMARILLO"               ║ 2) ");
       }else if(cantidad_leidos == 2){
-        printf(AMARILLO" 3) ");
+        printf(AMARILLO"               ║ 3) ");
       }else{
-        printf(AMARILLO" -> ");
+        printf(AMARILLO"               ║ -> ");
       }
-      printf(AMARILLO"%s : %i\n", nombre, puntaje);
+      printf(AMARILLO"%s : %-5d ", nombre, puntaje);
+      poner_espacios_segun_nombre(nombre);
       leidos = fscanf(arch_ranking, FORMATO_RANKING, nombre, &puntaje);
       cantidad_leidos ++;
     }
   }else{
     while((leidos == 2) && (cantidad_leidos < cantidad_rank)){
       if(cantidad_leidos == 0){
-        printf(AMARILLO"1) ");
+        printf(AMARILLO"               ║ 1) ");
       }else if(cantidad_leidos == 1){
-        printf(AMARILLO"2) ");
+        printf(AMARILLO"               ║ 2) ");
       }else if(cantidad_leidos == 2){
-        printf(AMARILLO"3) ");
+        printf(AMARILLO"               ║ 3) ");
       }else{
-        printf(AMARILLO"-> ");
+        printf(AMARILLO"               ║ -> ");
       }
-      printf(AMARILLO"%s : %i\n", nombre, puntaje);
+      printf(AMARILLO"%s : %-5d ", nombre, puntaje);
+      poner_espacios_segun_nombre(nombre);
       leidos = fscanf(arch_ranking, FORMATO_RANKING, nombre, &puntaje);
       cantidad_leidos ++;
     }
   }
+  printf(AMARILLO"               ╚═══════════════════════════════════════════════════════════════╝"BLANCO"\n\n\n");
 
 }
 
