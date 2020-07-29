@@ -359,14 +359,14 @@ bool son_caminos_separados(juego_t juego){
 *	Precondiciones: Debe recibir un archivo abierto que contenga el camino a leer.
 *	Postcondiciones: Leera del archivo el camino y lo guardara en el vector camino con su respectivo tope.
 */
-void leer_camino(FILE* arch_camino, coordenada_t camino[MAX_LONGITUD_CAMINO], int *tope_camino){
+void leer_camino(FILE** arch_camino, coordenada_t camino[MAX_LONGITUD_CAMINO], int *tope_camino){
   coordenada_t casillero_camino;
-  int leidos = fscanf(arch_camino, "%i;%i\n", &(casillero_camino.fil), &(casillero_camino.col));
+  int leidos = fscanf(*arch_camino, "%i;%i\n", &(casillero_camino.fil), &(casillero_camino.col));
   while(leidos == 2){
     camino[*tope_camino].fil = casillero_camino.fil;
     camino[*tope_camino].col = casillero_camino.col;
     (*tope_camino) ++;
-    leidos = fscanf(arch_camino, "%i;%i\n", &(casillero_camino.fil), &(casillero_camino.col));
+    leidos = fscanf(*arch_camino, "%i;%i\n", &(casillero_camino.fil), &(casillero_camino.col));
   }
 }
 
@@ -374,13 +374,13 @@ void leer_camino(FILE* arch_camino, coordenada_t camino[MAX_LONGITUD_CAMINO], in
 *	Precondiciones: Debera recibir un juego con un nivel valido (1,2,3,4) y un archivo valido.
 *	Postcondiciones: Creara el o los caminos validos segun el nivel correspondiente o leera los creados por el usuario.
 */
-void crear_caminos(juego_t *juego, FILE* arch_camino){
+void crear_caminos(juego_t *juego, FILE** arch_camino){
 
 	coordenada_t entrada1;
 	coordenada_t torre1;
 	coordenada_t entrada2;
 	coordenada_t torre2;
-  if(!(arch_camino)){
+  if(!(*arch_camino)){
     if(juego -> nivel_actual == NIVEL_1){
       entrada1.fil = rand() % TOPE_TABLERO_1_2;
       entrada1.col = POS_MAX_1_2;
@@ -448,22 +448,22 @@ void crear_caminos(juego_t *juego, FILE* arch_camino){
     juego -> nivel.tope_camino_1 = 0;
     juego -> nivel.tope_camino_2 = 0;
 		int nivel_leyendo;
-		fscanf(arch_camino, "NIVEL=%i\n", &nivel_leyendo);
+		fscanf(*arch_camino, "NIVEL=%i\n", &nivel_leyendo);
     if(nivel_leyendo == 1){
-      fscanf(arch_camino, "CAMINO=1\n");
+      fscanf(*arch_camino, "CAMINO=1\n");
       leer_camino(arch_camino, juego -> nivel.camino_1, &(juego -> nivel.tope_camino_1));
     }else if(nivel_leyendo == 2){
-      fscanf(arch_camino, "CAMINO=2\n");
+      fscanf(*arch_camino, "CAMINO=2\n");
       leer_camino(arch_camino, juego -> nivel.camino_2, &(juego -> nivel.tope_camino_2));
     }else if(nivel_leyendo == 3){
-      fscanf(arch_camino, "CAMINO=1\n");
+      fscanf(*arch_camino, "CAMINO=1\n");
       leer_camino(arch_camino, juego -> nivel.camino_1, &(juego -> nivel.tope_camino_1));
-      fscanf(arch_camino, "CAMINO=2\n");
+      fscanf(*arch_camino, "CAMINO=2\n");
       leer_camino(arch_camino, juego -> nivel.camino_2, &(juego -> nivel.tope_camino_2));
     }else if(nivel_leyendo == 4){
-      fscanf(arch_camino, "CAMINO=1\n");
+      fscanf(*arch_camino, "CAMINO=1\n");
       leer_camino(arch_camino, juego -> nivel.camino_1, &(juego -> nivel.tope_camino_1));
-      fscanf(arch_camino, "CAMINO=2\n");
+      fscanf(*arch_camino, "CAMINO=2\n");
       leer_camino(arch_camino, juego -> nivel.camino_2, &(juego -> nivel.tope_camino_2));
     }
   }
@@ -639,7 +639,7 @@ void inicializar_enemigos(juego_t *juego){
 *	Precondiciones: Debe recibir un juego con un nivel valido (1,2,3,4), una configuracion valida y un archivo de caminos valido.
 *	Postcondiciones: Iniciara el nivel correspondiente.
 */
-void iniciar_nivel(juego_t *juego, configuracion_t config, FILE* arch_camino){
+void iniciar_nivel(juego_t *juego, configuracion_t config, FILE** arch_camino){
 	mostrar_introduccion_nivel(juego -> nivel_actual);
 	crear_caminos(juego, arch_camino);
   inicializar_enemigos(juego);
@@ -661,13 +661,30 @@ bool es_posible_poner_nuevo_defensor(juego_t juego){
 		cada_cuanto_def_extra = PERIOD_ENEM_2_3_4;
 	}
 
-	if(((juego.nivel.tope_enemigos % cada_cuanto_def_extra) == 0) && (juego.nivel.tope_enemigos != 0) && (juego.nivel.tope_enemigos != juego.nivel.max_enemigos_nivel) &&
-			( (juego.nivel_actual == NIVEL_1 && juego.torres.enanos_extra > 0) || (juego.nivel_actual == NIVEL_2 && juego.torres.elfos_extra > 0) ||
-			( (juego.nivel_actual == NIVEL_3 || juego.nivel_actual == NIVEL_4) && (juego.torres.elfos_extra > 0 || juego.torres.enanos_extra > 0)) )){
+	if(((juego.nivel.tope_enemigos % cada_cuanto_def_extra) == 0) && (juego.nivel.tope_enemigos != 0) && (juego.nivel.tope_enemigos != juego.nivel.max_enemigos_nivel)
+	 && (juego.torres.elfos_extra > 0 || juego.torres.enanos_extra > 0)){
 			es_posible = true;
 	}
 
 	return es_posible;
+}
+
+/*
+*	Precondiciones: Debe recibir un juego con todas sus estructuras validas, una configuracion y un tipo de defensor valido (ENANO o ELFO).
+*	Postcondiciones: Devolvera true si el usuario costear un defensor extra del tipo especificado.
+*/
+bool puede_costear_defensor(juego_t juego, configuracion_t config, char tipo_defensor){
+	bool puede_costear = false;
+	if(tipo_defensor == ENANOS){
+		if((juego.torres.resistencia_torre_1 > config.enanos_extra[1]) && (juego.torres.resistencia_torre_2 > config.enanos_extra[2])){
+			puede_costear = true;
+		}
+	}else{
+		if((juego.torres.resistencia_torre_1 > config.elfos_extra[1]) && (juego.torres.resistencia_torre_2 > config.elfos_extra[2])){
+			puede_costear = true;
+		}
+	}
+	return puede_costear;
 }
 
 /*
@@ -697,15 +714,15 @@ void actualizar_menu_si_no(juego_t juego, int *opcion_actual, torres_t maximos, 
 	system("clear");
 
 	mostrar_juego(juego, maximos);
-	if(juego.torres.enanos_extra > 0 && juego.torres.elfos_extra > 0){
+	if(juego.torres.enanos_extra > 0 && juego.torres.elfos_extra > 0 && puede_costear_defensor(juego, config, ENANOS) && puede_costear_defensor(juego, config, ELFOS)){
 			printf(""AMARILLO" -> Tenes disponible un enano o un elfo extra para ubicar"VERDE"\n");
 			printf(""AMARILLO" -> Quieres poner un defensor extra?\n");
-		}else if(juego.torres.enanos_extra > 0){
+		}else if(juego.torres.enanos_extra > 0 && puede_costear_defensor(juego, config, ENANOS)){
 			printf(""AMARILLO" -> Tenes disponible un enano extra para ubicar"VERDE"\n");
-			printf(""AMARILLO" -> Quieres poner un enano extra? (Costo -> Torre 1 : %i Torre 2 : %i)\n", config.enanos_extra[1], config.enanos_extra[2]);
+			printf(""AMARILLO" -> Quieres poner un enano extra? || Costo ( Torre 1 -> %i || Torre 2 -> %i )\n", config.enanos_extra[1], config.enanos_extra[2]);
 		}else{
 			printf(""AMARILLO" -> Tenes disponible un elfo extra para ubicar"VERDE"\n");
-			printf(""AMARILLO" -> Quieres poner un elfo extra? (Costo -> Torre 1 : %i Torre 2 : %i)\n", config.elfos_extra[1], config.elfos_extra[2]);
+			printf(""AMARILLO" -> Quieres poner un elfo extra? || Costo ( Torre 1 -> %i || Torre 2 -> %i )\n", config.elfos_extra[1], config.elfos_extra[2]);
 	}
 
 	if(*opcion_actual == OP_SI){
@@ -771,14 +788,14 @@ void actualizar_menu_tipo(juego_t juego, int *opcion_actual, torres_t maximos, c
 	mostrar_juego(juego, maximos);
 	printf(""AMARILLO" -> Quieres un enano o un elfo extra?\n");
 	if(*opcion_actual == OP_ENANOS){
-		printf(AMARILLO" -> Enano (Costo -> Torre 1 : %i Torre 2 : %i)\n", config.enanos_extra[1], config.enanos_extra[2]);
+		printf(AMARILLO" -> Enano || Costo ( Torre 1 -> %i || Torre 2 -> %i )\n", config.enanos_extra[1], config.enanos_extra[2]);
 	}else{
-		printf(AMARILLO"    Enano (Costo -> Torre 1 : %i Torre 2 : %i)\n", config.enanos_extra[1], config.enanos_extra[2]);
+		printf(AMARILLO"    Enano || Costo ( Torre 1 -> %i || Torre 2 -> %i )\n", config.enanos_extra[1], config.enanos_extra[2]);
 	}
 	if(*opcion_actual == OP_ELFOS){
-		printf(AMARILLO" -> Elfo (Costo -> Torre 1 : %i Torre 2 : %i)\n", config.elfos_extra[1], config.elfos_extra[2]);
+		printf(AMARILLO" -> Elfo  || Costo ( Torre 1 -> %i || Torre 2 -> %i )\n", config.elfos_extra[1], config.elfos_extra[2]);
 	}else{
-		printf(AMARILLO"    Elfo (Costo -> Torre 1 : %i Torre 2 : %i)\n", config.elfos_extra[1], config.elfos_extra[2]);
+		printf(AMARILLO"    Elfo  || Costo ( Torre 1 -> %i || Torre 2 -> %i )\n", config.elfos_extra[1], config.elfos_extra[2]);
 	}
 }
 
@@ -790,7 +807,7 @@ void obtener_tipo_defensor(juego_t juego, char *tipo_defensor, torres_t maximos,
 	int opcion_actual = OP_ENANOS;
 	int tecla_pulsada;
 	bool entro_a_menu = false;
-	if(juego.torres.enanos_extra > NINGUN_ENANO_EXTRA && juego.torres.elfos_extra > NINGUN_ELFO_EXTRA){
+	if(juego.torres.enanos_extra > NINGUN_ENANO_EXTRA && juego.torres.elfos_extra > NINGUN_ELFO_EXTRA && puede_costear_defensor(juego, config, ENANOS) && puede_costear_defensor(juego, config, ELFOS)){
 		actualizar_menu_tipo(juego, &opcion_actual, maximos, config);
 		while(!entro_a_menu){
 			tecla_pulsada = getch();
@@ -804,7 +821,7 @@ void obtener_tipo_defensor(juego_t juego, char *tipo_defensor, torres_t maximos,
 				confirmar_tipo(opcion_actual,&entro_a_menu,tipo_defensor);
 			}
 		}
-	}else if(juego.torres.enanos_extra > NINGUN_ENANO_EXTRA){
+	}else if(juego.torres.enanos_extra > NINGUN_ENANO_EXTRA && puede_costear_defensor(juego, config, ENANOS)){
 		*tipo_defensor = ENANOS;
 	}else{
 		*tipo_defensor = ELFOS;
@@ -847,7 +864,7 @@ void poner_nuevo_defensor(juego_t *juego, configuracion_t config){
 	maximos.resistencia_torre_2 = config.resistencia_torres[1];
 	maximos.enanos_extra = config.enanos_extra[0];
 	maximos.elfos_extra = config.elfos_extra[0];
-	if(es_posible_poner_nuevo_defensor(*juego)){
+	if(es_posible_poner_nuevo_defensor(*juego) && (puede_costear_defensor(*juego, config, ENANOS) || puede_costear_defensor(*juego, config, ELFOS))){
 		bool quiere_defensor;
 		char tipo_defensor;
 		preguntar_si_quiere_defensor(*juego, &quiere_defensor, maximos, config);
@@ -867,7 +884,7 @@ void poner_nuevo_defensor(juego_t *juego, configuracion_t config){
 *	Precondiciones: Debe recibir un juego con todas sus estructuras validas, una configuracion valida y un archivo de caminos valido.
 *	Postcondiciones: Pasara al siguiente nivel con todos sus valores inicializados.
 */
-void pasar_al_siguiente_nivel(juego_t *juego, configuracion_t config, FILE* arch_camino){
+void pasar_al_siguiente_nivel(juego_t *juego, configuracion_t config, FILE** arch_camino){
 	torres_t maximos;
 	maximos.resistencia_torre_1 = config.resistencia_torres[0];
 	maximos.resistencia_torre_2 = config.resistencia_torres[1];
@@ -1060,39 +1077,46 @@ void finalizar_juego(juego_t juego, configuracion_t config, char nombre_config[M
 /********************************************************************************************** Jugar juego ******************************************************************************************/
 
 /*
-*	Precondiciones: Debe recibir un archivo valido (en caso de estar abierto).
-* Postcondiciones: Llenara la configuracion con la leida en el archivo.
+* Postcondiciones: Llenara la configuracion con sus valores por defecto.
 */
-void llenar_config(configuracion_t *config, FILE* arch_config){
-  if(!arch_config){
-    config -> resistencia_torres[0] = VIDA_INICIAL_TORRES;
-    config -> resistencia_torres[1] = VIDA_INICIAL_TORRES;
-    config -> enanos_inicio[0] = CANT_DEFENSORES_1;
-    config -> enanos_inicio[1] = NINGUN_DEFENSOR;
-    config -> enanos_inicio[2] = CANT_DEFENSORES_3 / 2;
-    config -> enanos_inicio[3] = CANT_DEFENSORES_4 / 2;
-    config -> elfos_inicio[0] = NINGUN_DEFENSOR;
-    config -> elfos_inicio[1] = CANT_DEFENSORES_2;
-    config -> elfos_inicio[2] = CANT_DEFENSORES_3 / 2;
-    config -> elfos_inicio[3] = CANT_DEFENSORES_4 / 2;
-    config -> enanos_extra[0] = ENANOS_EXTRA;
-    config -> enanos_extra[1] = COSTO_DEF_EXTRA;
-    config -> enanos_extra[2] = SIN_COSTO;
-    config -> elfos_extra[0] = ELFOS_EXTRA;
-    config -> elfos_extra[1] = SIN_COSTO;
-    config -> elfos_extra[2] = COSTO_DEF_EXTRA;
-    config -> animo_enanos[0] =  POR_DEFECTO;
-    config -> animo_enanos[1] =  POR_DEFECTO;
-    config -> animo_elfos[0] =  POR_DEFECTO;
-    config -> animo_elfos[1] =  POR_DEFECTO;
-    config -> velocidad_de_juego = VEL_NORMAL;
-    strcpy(config -> caminos, STR_POR_DEFECTO);
+void llenar_config_defecto(configuracion_t *config){
+	config -> resistencia_torres[0] = VIDA_INICIAL_TORRES;
+	config -> resistencia_torres[1] = VIDA_INICIAL_TORRES;
+	config -> enanos_inicio[0] = CANT_DEFENSORES_1;
+	config -> enanos_inicio[1] = NINGUN_DEFENSOR;
+	config -> enanos_inicio[2] = CANT_DEFENSORES_3 / 2;
+	config -> enanos_inicio[3] = CANT_DEFENSORES_4 / 2;
+	config -> elfos_inicio[0] = NINGUN_DEFENSOR;
+	config -> elfos_inicio[1] = CANT_DEFENSORES_2;
+	config -> elfos_inicio[2] = CANT_DEFENSORES_3 / 2;
+	config -> elfos_inicio[3] = CANT_DEFENSORES_4 / 2;
+	config -> enanos_extra[0] = ENANOS_EXTRA;
+	config -> enanos_extra[1] = COSTO_DEF_EXTRA;
+	config -> enanos_extra[2] = SIN_COSTO;
+	config -> elfos_extra[0] = ELFOS_EXTRA;
+	config -> elfos_extra[1] = SIN_COSTO;
+	config -> elfos_extra[2] = COSTO_DEF_EXTRA;
+	config -> animo_enanos[0] =  POR_DEFECTO;
+	config -> animo_enanos[1] =  POR_DEFECTO;
+	config -> animo_elfos[0] =  POR_DEFECTO;
+	config -> animo_elfos[1] =  POR_DEFECTO;
+	config -> velocidad_de_juego = VEL_NORMAL;
+	strcpy(config -> caminos, STR_POR_DEFECTO);
+}
+
+/*
+*	Precondiciones: Debe recibir un archivo valido (en caso de estar abierto).
+* Postcondiciones: Llenara la configuracion con la leida en el archivo o por la configuracion por defecto en caso de no poder abrirlo.
+*/
+void llenar_config(configuracion_t *config, FILE** arch_config){
+  if(!(*arch_config)){
+    llenar_config_defecto(config);
   }else{
 		char indicador[MAX_NOMBRE];
-		int leidos = fscanf(arch_config,"%[^=]=", indicador);
+		int leidos = fscanf(*arch_config,"%[^=]=", indicador);
 		while(leidos != EOF){
 			if(strcmp(indicador, "RESISTENCIA_TORRES") == 0){
-				fscanf(arch_config,"%i,%i\n", &(config -> resistencia_torres[0]), &(config -> resistencia_torres[1]));
+				fscanf(*arch_config,"%i,%i\n", &(config -> resistencia_torres[0]), &(config -> resistencia_torres[1]));
 		    if(config -> resistencia_torres[0] == POR_DEFECTO){
 		      config -> resistencia_torres[0] = VIDA_INICIAL_TORRES;
 		    }
@@ -1100,7 +1124,7 @@ void llenar_config(configuracion_t *config, FILE* arch_config){
 		      config -> resistencia_torres[1] = VIDA_INICIAL_TORRES;
 		    }
 			}else if(strcmp(indicador, "ENANOS_INICIO") == 0){
-				fscanf(arch_config, "%i,%i,%i,%i\n", &(config -> enanos_inicio[0]), &(config -> enanos_inicio[1]), &(config -> enanos_inicio[2]), &(config -> enanos_inicio[3]));
+				fscanf(*arch_config, "%i,%i,%i,%i\n", &(config -> enanos_inicio[0]), &(config -> enanos_inicio[1]), &(config -> enanos_inicio[2]), &(config -> enanos_inicio[3]));
 		    if(config -> enanos_inicio[0] == POR_DEFECTO){
 		      config -> enanos_inicio[0] = CANT_DEFENSORES_1;
 		    }
@@ -1114,7 +1138,7 @@ void llenar_config(configuracion_t *config, FILE* arch_config){
 		      config -> enanos_inicio[3] = CANT_DEFENSORES_4 / 2;
 		    }
 			}else if(strcmp(indicador, "ELFOS_INICIO") == 0){
-				fscanf(arch_config, "%i,%i,%i,%i\n", &(config -> elfos_inicio[0]), &(config -> elfos_inicio[1]), &(config -> elfos_inicio[2]), &(config -> elfos_inicio[3]));
+				fscanf(*arch_config, "%i,%i,%i,%i\n", &(config -> elfos_inicio[0]), &(config -> elfos_inicio[1]), &(config -> elfos_inicio[2]), &(config -> elfos_inicio[3]));
 		    if(config -> elfos_inicio[0] == POR_DEFECTO){
 		      config -> elfos_inicio[0] = NINGUN_DEFENSOR;
 		    }
@@ -1128,7 +1152,7 @@ void llenar_config(configuracion_t *config, FILE* arch_config){
 		      config -> elfos_inicio[3] = CANT_DEFENSORES_4 / 2;
 		    }
 			}else if(strcmp(indicador, "ENANOS_EXTRA") == 0){
-				fscanf(arch_config, "%i,%i,%i\n", &(config -> enanos_extra[0]), &(config -> enanos_extra[1]), &(config -> enanos_extra[2]));
+				fscanf(*arch_config, "%i,%i,%i\n", &(config -> enanos_extra[0]), &(config -> enanos_extra[1]), &(config -> enanos_extra[2]));
 		    if(config -> enanos_extra[0] == POR_DEFECTO){
 		      config -> enanos_extra[0] = ENANOS_EXTRA;
 		    }
@@ -1139,7 +1163,7 @@ void llenar_config(configuracion_t *config, FILE* arch_config){
 		      config -> enanos_extra[2] = SIN_COSTO;
 		    }
 			}else if(strcmp(indicador, "ELFOS_EXTRA") == 0){
-				fscanf(arch_config, "%i,%i,%i\n", &(config -> elfos_extra[0]), &(config -> elfos_extra[1]), &(config -> elfos_extra[2]));
+				fscanf(*arch_config, "%i,%i,%i\n", &(config -> elfos_extra[0]), &(config -> elfos_extra[1]), &(config -> elfos_extra[2]));
 		    if(config -> elfos_extra[0] == POR_DEFECTO){
 		      config -> elfos_extra[0] = ENANOS_EXTRA;
 		    }
@@ -1150,18 +1174,18 @@ void llenar_config(configuracion_t *config, FILE* arch_config){
 		      config -> elfos_extra[2] = COSTO_DEF_EXTRA;
 		    }
 			}else if(strcmp(indicador, "ENANOS_ANIMO") == 0){
-				fscanf(arch_config, "%i,%i\n", &(config -> animo_enanos[0]), &(config -> animo_enanos[1]));
+				fscanf(*arch_config, "%i,%i\n", &(config -> animo_enanos[0]), &(config -> animo_enanos[1]));
 			}else if(strcmp(indicador, "ELFOS_ANIMO") == 0){
-		    fscanf(arch_config, "%i,%i\n", &(config -> animo_elfos[0]), &(config -> animo_elfos[1]));
+		    fscanf(*arch_config, "%i,%i\n", &(config -> animo_elfos[0]), &(config -> animo_elfos[1]));
 			}else if(strcmp(indicador, "VELOCIDAD") == 0){
-				fscanf(arch_config, "%f\n", &(config -> velocidad_de_juego));
+				fscanf(*arch_config, "%f\n", &(config -> velocidad_de_juego));
 		    if(config -> velocidad_de_juego == POR_DEFECTO){
 		      config -> velocidad_de_juego = VEL_NORMAL;
 		    }
 			}else if(strcmp(indicador, "CAMINOS") == 0){
-				fscanf(arch_config, "%[^\n]\n", config -> caminos);
+				fscanf(*arch_config, "%[^\n]\n", config -> caminos);
 			}
-			leidos = fscanf(arch_config,"%[^=]=", indicador);
+			leidos = fscanf(*arch_config,"%[^=]=", indicador);
 		}
   }
 }
@@ -1224,7 +1248,7 @@ void jugar_juego(char ruta_config[MAX_RUTA], char ruta_grabacion[MAX_RUTA]){
 			copiar_nombre_config(nombre_config, ruta_config);
 		}
 	}
-  llenar_config(&config, arch_config);
+  llenar_config(&config, &arch_config);
 	if(arch_config){
 		fclose(arch_config);
 	}
@@ -1246,11 +1270,11 @@ void jugar_juego(char ruta_config[MAX_RUTA], char ruta_grabacion[MAX_RUTA]){
   if(strcmp(config.caminos, STR_POR_DEFECTO) != 0){
     arch_camino = fopen(config.caminos, "r");
   }
-  iniciar_nivel(&juego, config, arch_camino);
+  iniciar_nivel(&juego, config, &arch_camino);
   mostrar_juego(juego, maximos);
   while (estado_juego(juego) == JUEGO_JUGANDO){
     if(estado_nivel(juego.nivel) == NIVEL_GANADO){
-      pasar_al_siguiente_nivel(&juego, config, arch_camino);
+      pasar_al_siguiente_nivel(&juego, config, &arch_camino);
     }else if(estado_nivel(juego.nivel) == NIVEL_JUGANDO){
       jugar_turno(&juego);
       mostrar_juego(juego,maximos);

@@ -807,9 +807,9 @@ void reiniciar_caminos(int *tope_camino_1, int *tope_camino_2 ,int n_camino){
 * Precondiciones: Debe recibir un archivo abierto para escritura, un camino valido y su respectivo tope tambien valido.
 * Postcondiciones: Escribira el camino dentro del archivo con el formato dado.
 */
-void escribir_camino(FILE* archivo_caminos, coordenada_t camino[MAX_LONGITUD_CAMINO], int tope_camino){
+void escribir_camino(FILE** archivo_caminos, coordenada_t camino[MAX_LONGITUD_CAMINO], int tope_camino){
   for(int i = 0; i < tope_camino; i++){
-    fprintf(archivo_caminos, FORMATO_CAMINO,camino[i].fil, camino[i].col);
+    fprintf(*archivo_caminos, FORMATO_CAMINO,camino[i].fil, camino[i].col);
   }
 }
 
@@ -817,28 +817,28 @@ void escribir_camino(FILE* archivo_caminos, coordenada_t camino[MAX_LONGITUD_CAM
 * Precondiciones: Debe recibir un archivo valido abierto para escritura, dos caminos validos, sus respectivos topes validos, y un numero de camino valido (0,1,2,3,4,5).
 * Postcondiciones: Escribira el archivo con el formato dado, escribiendo el nivel, el numero de camino y el respectivo camino.
 */
-void escribir_archivo_con_caminos(FILE* archivo_caminos, coordenada_t camino_1[MAX_LONGITUD_CAMINO], coordenada_t camino_2[MAX_LONGITUD_CAMINO], int tope_camino_1, int tope_camino_2, int n_camino){
+void escribir_archivo_con_caminos(FILE** archivo_caminos, coordenada_t camino_1[MAX_LONGITUD_CAMINO], coordenada_t camino_2[MAX_LONGITUD_CAMINO], int tope_camino_1, int tope_camino_2, int n_camino){
   if(n_camino == 0){
-    fprintf(archivo_caminos, "NIVEL=1\n");
-    fprintf(archivo_caminos, "CAMINO=1\n");
+    fprintf(*archivo_caminos, "NIVEL=1\n");
+    fprintf(*archivo_caminos, "CAMINO=1\n");
     escribir_camino(archivo_caminos, camino_1, tope_camino_1);
   }else if(n_camino == 1){
-    fprintf(archivo_caminos, "NIVEL=2\n");
-    fprintf(archivo_caminos, "CAMINO=2\n");
+    fprintf(*archivo_caminos, "NIVEL=2\n");
+    fprintf(*archivo_caminos, "CAMINO=2\n");
     escribir_camino(archivo_caminos, camino_2, tope_camino_2);
   }else if(n_camino == 2){
-    fprintf(archivo_caminos, "NIVEL=3\n");
-    fprintf(archivo_caminos, "CAMINO=1\n");
+    fprintf(*archivo_caminos, "NIVEL=3\n");
+    fprintf(*archivo_caminos, "CAMINO=1\n");
     escribir_camino(archivo_caminos, camino_1, tope_camino_1);
   }else if(n_camino == 3){
-    fprintf(archivo_caminos, "CAMINO=2\n");
+    fprintf(*archivo_caminos, "CAMINO=2\n");
     escribir_camino(archivo_caminos, camino_2, tope_camino_2);
   }else if(n_camino == 4){
-    fprintf(archivo_caminos, "NIVEL=4\n");
-    fprintf(archivo_caminos, "CAMINO=1\n");
+    fprintf(*archivo_caminos, "NIVEL=4\n");
+    fprintf(*archivo_caminos, "CAMINO=1\n");
     escribir_camino(archivo_caminos, camino_1, tope_camino_1);
   }else{
-    fprintf(archivo_caminos, "CAMINO=2\n");
+    fprintf(*archivo_caminos, "CAMINO=2\n");
     escribir_camino(archivo_caminos, camino_2, tope_camino_2);
   }
 }
@@ -855,7 +855,7 @@ void crear_caminos_personalizados(char ruta[MAX_RUTA]){
   int tope_camino_2 = 0;
   for(int i = 0; i < CANTIDAD_CAMINOS; i++){
     crear_camino_wasd(camino_1,camino_2, &tope_camino_1, &tope_camino_2, i);
-    escribir_archivo_con_caminos(archivo_caminos,camino_1, camino_2, tope_camino_1, tope_camino_2, i);
+    escribir_archivo_con_caminos(&archivo_caminos,camino_1, camino_2, tope_camino_1, tope_camino_2, i);
     reiniciar_caminos(&tope_camino_1, &tope_camino_2, i);
   }
   fclose(archivo_caminos);
@@ -1177,16 +1177,16 @@ void entrar_menu_config(configuracion_t *config, int opcion_actual){
 * Precondiciones: Debe recibir un archivo abierto para escritura y una configuracion con todos sus elementos validos.
 * Postcondiciones: Escribira en el archivo la configuracion ingresada por el usuario.
 */
-void escribir_configuracion(FILE* archivo_config, configuracion_t config){
-  fprintf(archivo_config, "RESISTENCIA_TORRES=%i,%i\n", config.resistencia_torres[0], config.resistencia_torres[1]);
-  fprintf(archivo_config, "ENANOS_INICIO=%i,%i,%i,%i\n", config.enanos_inicio[0], config.enanos_inicio[1], config.enanos_inicio[2], config.enanos_inicio[3]);
-  fprintf(archivo_config, "ELFOS_INICIO=%i,%i,%i,%i\n", config.elfos_inicio[0], config.elfos_inicio[1], config.elfos_inicio[2], config.elfos_inicio[3]);
-  fprintf(archivo_config, "ENANOS_EXTRA=%i,%i,%i\n", config.enanos_extra[0], config.enanos_extra[1], config.enanos_extra[2]);
-  fprintf(archivo_config, "ELFOS_EXTRA=%i,%i,%i\n", config.elfos_extra[0], config.elfos_extra[1], config.elfos_extra[2]);
-  fprintf(archivo_config, "ENANOS_ANIMO=%i,%i\n", config.animo_enanos[0], config.animo_enanos[1]);
-  fprintf(archivo_config, "ELFOS_ANIMO=%i,%i\n", config.animo_elfos[0], config.animo_elfos[1]);
-  fprintf(archivo_config, "VELOCIDAD=%f\n", config.velocidad_de_juego);
-  fprintf(archivo_config, "CAMINOS=%s\n", config.caminos);
+void escribir_configuracion(FILE** archivo_config, configuracion_t config){
+  fprintf(*archivo_config, "RESISTENCIA_TORRES=%i,%i\n", config.resistencia_torres[0], config.resistencia_torres[1]);
+  fprintf(*archivo_config, "ENANOS_INICIO=%i,%i,%i,%i\n", config.enanos_inicio[0], config.enanos_inicio[1], config.enanos_inicio[2], config.enanos_inicio[3]);
+  fprintf(*archivo_config, "ELFOS_INICIO=%i,%i,%i,%i\n", config.elfos_inicio[0], config.elfos_inicio[1], config.elfos_inicio[2], config.elfos_inicio[3]);
+  fprintf(*archivo_config, "ENANOS_EXTRA=%i,%i,%i\n", config.enanos_extra[0], config.enanos_extra[1], config.enanos_extra[2]);
+  fprintf(*archivo_config, "ELFOS_EXTRA=%i,%i,%i\n", config.elfos_extra[0], config.elfos_extra[1], config.elfos_extra[2]);
+  fprintf(*archivo_config, "ENANOS_ANIMO=%i,%i\n", config.animo_enanos[0], config.animo_enanos[1]);
+  fprintf(*archivo_config, "ELFOS_ANIMO=%i,%i\n", config.animo_elfos[0], config.animo_elfos[1]);
+  fprintf(*archivo_config, "VELOCIDAD=%f\n", config.velocidad_de_juego);
+  fprintf(*archivo_config, "CAMINOS=%s\n", config.caminos);
 }
 
 void crear_configuracion_personalizada(char ruta[MAX_RUTA]){
@@ -1213,7 +1213,7 @@ void crear_configuracion_personalizada(char ruta[MAX_RUTA]){
       entrar_menu_config(&config, opcion_actual);
       actualizar_config_menu(config, &opcion_actual);
     }else if(tecla_pulsada == LETRA_F_MAX || tecla_pulsada == LETRA_F_MIN){
-      escribir_configuracion(arch_config, config);
+      escribir_configuracion(&arch_config, config);
       termino_de_configurar = true;
       printf("Se ha guardado con EXITO\n");
     }

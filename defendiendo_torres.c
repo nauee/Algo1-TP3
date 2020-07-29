@@ -507,10 +507,10 @@ void mostrar_tablero(char tablero[MAX_FILAS][MAX_COLUMNAS], int tope){
 *	Postcondiciones: Mostrara la barra de resistencia de la torre correspondiente por pantalla.
 */
 void mostrar_barra_resistencia(int resist_actual, int maximo, int torre_actual){
-	int factor_i = maximo / 30;
-	int tercio_resist = maximo / 3;
+	float factor_i = (float) maximo / 30;
+	float tercio_resist = (float ) maximo / 3;
 	printf(AMARILLO"║ Vida Torre %i:  "BLANCO, torre_actual);
-	for(int i = 0; i < 30; i++){
+	for(float i = 0; i < 30; i++){
 		if (((i * factor_i) < resist_actual) && (resist_actual >= tercio_resist * 2)){
 			printf(""VERDE"▒");
 		}else if (((i * factor_i) < resist_actual) && (resist_actual >= tercio_resist)){
