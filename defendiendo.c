@@ -12,6 +12,10 @@
 #define STR_POR_DEFECTO "-1"
 #define RANKING "ranking"
 #define CSV ".csv"
+#define INDICADOR_GRABACION "grabacion="
+#define INDICADOR_CONFIG "config="
+#define INDICADOR_VELOCIDAD "velocidad="
+#define INDICADOR_LISTAR "listar="
 
 /************************************************************************************************Extra************************************************************************************************/
 
@@ -35,9 +39,9 @@ void encontrar_valores_jugar(char ruta_config[MAX_RUTA], char ruta_grabacion[MAX
   int pos_rec = -1;
   int pos_config = -1;
   for(int i = 2; i < argc; i++){
-    if(strncmp(argv[i],"grabacion=",10) == 0){
+    if(strncmp(argv[i],INDICADOR_GRABACION,strlen(INDICADOR_GRABACION)) == 0){
       pos_rec = i;
-    }else if(strncmp(argv[i],"config=",7) == 0){
+    }else if(strncmp(argv[i],INDICADOR_CONFIG,strlen(INDICADOR_CONFIG)) == 0){
       pos_config = i;
     }
   }
@@ -61,9 +65,9 @@ void encontrar_valores_repeticion(float *velocidad, char ruta_grabacion[MAX_RUTA
   int pos_rec = -1;
   int pos_vel = -1;
   for(int i = 2; i < argc; i++){
-    if(strncmp(argv[i],"grabacion=",strlen("grabacion=")) == 0){
+    if(strncmp(argv[i],INDICADOR_GRABACION,strlen(INDICADOR_GRABACION)) == 0){
       pos_rec = i;
-    }else if(strncmp(argv[i],"velocidad=",strlen("velocidad=")) == 0){
+    }else if(strncmp(argv[i],INDICADOR_VELOCIDAD,strlen(INDICADOR_VELOCIDAD)) == 0){
       pos_vel = i;
     }
   }
@@ -88,9 +92,9 @@ void encontrar_valores_ranking(int *cantidad_rank, char ruta_ranking[MAX_RUTA], 
   int pos_cantidad = -1;
   strcpy(ruta_ranking, RANKING);
   for(int i = 2; i < argc; i++){
-    if(strncmp(argv[i],"config=",strlen("config=")) == 0){
+    if(strncmp(argv[i],INDICADOR_CONFIG,strlen(INDICADOR_CONFIG)) == 0){
       pos_config = i;
-    }else if(strncmp(argv[i],"listar=",strlen("listar=")) == 0){
+    }else if(strncmp(argv[i],INDICADOR_LISTAR,strlen(INDICADOR_LISTAR)) == 0){
       pos_cantidad = i;
     }
   }

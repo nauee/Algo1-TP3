@@ -59,7 +59,26 @@ static const int POS_MAX_3_4 = 19;
 static const char PASTO = '~';
 static const char CAMINO = 'C';
 const char BACKSPACE = 127;
+const int PRIMER_CAMINO = 0;
+const int SEGUNDO_CAMINO = 1;
+const int TERCER_CAMINO = 2;
+const int CUARTO_CAMINO = 3;
+const int QUINTO_CAMINO = 4;
+const int SEXTO_CAMINO = 5;
+const int CAMINO_1 = 1;
+const int CAMINO_2 = 2;
+const int MAXIMO_RESIST_TORRE = 9999;
+const int MIN_RESIST_TORRE = 1;
+const int MAX_DEFENSORES = 99;
+const int MIN_DEFENSORES = 0;
+const int MIN_COSTO = 1;
+const int MIN_PORCENTAJE = 1;
+const int MAX_PORCENTAJE = 100;
 
+/*
+* Precondiciones: Debe recibir un nombre que no supere el maximo.
+* Postcondiciones: Pondra una cantidad de espacios segun la longitud del nombre.
+*/
 void poner_espacios_segun_nombre(char nombre[MAX_NOMBRE]){
   int largo_nombre = (int)strlen(nombre);
   for(int i = 0; i < (MAX_NOMBRE - largo_nombre); i++){
@@ -558,13 +577,13 @@ static bool es_posible_moverse(coordenada_t posicion, int movimiento, int tope_m
 */
 bool es_pos_torre_valida(int n_camino, coordenada_t pos_actual){
   bool es_valida = false;
-  if(n_camino == 0 && pos_actual.col == POS_MIN){
+  if(n_camino == PRIMER_CAMINO && pos_actual.col == POS_MIN){
     es_valida = true;
-  }else if(n_camino == 1 && pos_actual.col == POS_MAX_1_2){
+  }else if(n_camino == SEGUNDO_CAMINO && pos_actual.col == POS_MAX_1_2){
     es_valida = true;
-  }else if((n_camino == 2 || n_camino == 3) && pos_actual.fil == POS_MAX_3_4){
+  }else if((n_camino == TERCER_CAMINO || n_camino == CUARTO_CAMINO) && pos_actual.fil == POS_MAX_3_4){
     es_valida = true;
-  }else if((n_camino == 4 || n_camino == 5) && pos_actual.fil == POS_MIN){
+  }else if((n_camino == QUINTO_CAMINO || n_camino == SEXTO_CAMINO) && pos_actual.fil == POS_MIN){
     es_valida = true;
   }
   return es_valida;
@@ -602,26 +621,26 @@ void inicializar_creador(char creador[MAX_FILAS][MAX_COLUMNAS], int tope){
 */
 void mostrar_creador(char creador[MAX_FILAS][MAX_COLUMNAS], int tope, int n_camino){
   system("clear");
-  int nivel = 1;
-  int camino = 1;
-  if(n_camino == 0){
-    nivel = 1;
-    camino = 1;
-  }else if(n_camino == 1){
-    nivel = 2;
-    camino = 2;
-  }else if(n_camino == 2){
-    nivel = 3;
-    camino = 1;
-  }else if(n_camino == 3){
-    nivel = 3;
-    camino = 2;
-  }else if(n_camino == 4){
-    nivel = 4;
-    camino = 1;
+  int nivel;
+  int camino;
+  if(n_camino == PRIMER_CAMINO){
+    nivel = NIVEL_1;
+    camino = CAMINO_1;
+  }else if(n_camino == SEGUNDO_CAMINO){
+    nivel = NIVEL_2;
+    camino = CAMINO_2;
+  }else if(n_camino == TERCER_CAMINO){
+    nivel = NIVEL_3;
+    camino = CAMINO_1;
+  }else if(n_camino == CUARTO_CAMINO){
+    nivel = NIVEL_3;
+    camino = CAMINO_2;
+  }else if(n_camino == QUINTO_CAMINO){
+    nivel = NIVEL_4;
+    camino = CAMINO_1;
   }else{
-    nivel = 4;
-    camino = 2;
+    nivel = NIVEL_4;
+    camino = CAMINO_2;
   }
 
 
@@ -684,13 +703,13 @@ void mostrar_creador(char creador[MAX_FILAS][MAX_COLUMNAS], int tope, int n_cami
 void determinar_entrada(char creador[MAX_FILAS][MAX_COLUMNAS], int n_camino, coordenada_t* pos_actual, int tope_mov, coordenada_t camino_1[MAX_LONGITUD_CAMINO], int tope_camino_1){
   int tecla_pulsada;
   bool eligio_entrada = false;
-  if(n_camino == 0){
+  if(n_camino == PRIMER_CAMINO){
     pos_actual -> fil = 0;
     pos_actual -> col = 14;
-  }else if(n_camino == 1){
+  }else if(n_camino == SEGUNDO_CAMINO){
     pos_actual -> fil = 0;
     pos_actual -> col = 0;
-  }else if(n_camino == 2 || n_camino == 3){
+  }else if(n_camino == TERCER_CAMINO || n_camino == CUARTO_CAMINO){
     pos_actual -> fil = 0;
     pos_actual -> col = 0;
   }else{
@@ -700,7 +719,7 @@ void determinar_entrada(char creador[MAX_FILAS][MAX_COLUMNAS], int n_camino, coo
   creador[pos_actual -> fil][pos_actual -> col] = CAMINO;
   mostrar_creador(creador,tope_mov + 1, n_camino);
   printf(AMARILLO"  Primero selecciona la posicion donde se \n  Encontrara tu entrada (ESPACIO)\n");
-  if(n_camino == 0 || n_camino == 1){
+  if(n_camino == PRIMER_CAMINO || n_camino == SEGUNDO_CAMINO){
     creador[pos_actual -> fil][pos_actual -> col] = CAMINO;
     while(!eligio_entrada){
   		tecla_pulsada = getch();
@@ -785,7 +804,7 @@ void crear_camino_wasd(coordenada_t camino_1[MAX_LONGITUD_CAMINO], coordenada_t 
   char creador[MAX_FILAS][MAX_COLUMNAS];
   int tope_mov;
   bool eligio_camino = false;
-  if(n_camino == 0 || n_camino == 1){
+  if(n_camino == PRIMER_CAMINO || n_camino == SEGUNDO_CAMINO){
     tope_mov = POS_MAX_1_2;
   }else{
     tope_mov = POS_MAX_3_4;
@@ -867,11 +886,11 @@ void crear_camino_wasd(coordenada_t camino_1[MAX_LONGITUD_CAMINO], coordenada_t 
 * Postcondiciones: Reiniciara a 0 los topes de caminos que sean necesarios.
 */
 void reiniciar_caminos(int *tope_camino_1, int *tope_camino_2 ,int n_camino){
-  if(n_camino == 0){
+  if(n_camino == PRIMER_CAMINO){
     *tope_camino_1 = 0;
-  }else if(n_camino == 1){
+  }else if(n_camino == SEGUNDO_CAMINO){
     *tope_camino_2 = 0;
-  }else if(n_camino == 3){
+  }else if(n_camino == CUARTO_CAMINO){
     *tope_camino_1 = 0;
     *tope_camino_2 = 0;
   }
@@ -892,22 +911,22 @@ void escribir_camino(FILE** archivo_caminos, coordenada_t camino[MAX_LONGITUD_CA
 * Postcondiciones: Escribira el archivo con el formato dado, escribiendo el nivel, el numero de camino y el respectivo camino.
 */
 void escribir_archivo_con_caminos(FILE** archivo_caminos, coordenada_t camino_1[MAX_LONGITUD_CAMINO], coordenada_t camino_2[MAX_LONGITUD_CAMINO], int tope_camino_1, int tope_camino_2, int n_camino){
-  if(n_camino == 0){
+  if(n_camino == PRIMER_CAMINO){
     fprintf(*archivo_caminos, "NIVEL=1\n");
     fprintf(*archivo_caminos, "CAMINO=1\n");
     escribir_camino(archivo_caminos, camino_1, tope_camino_1);
-  }else if(n_camino == 1){
+  }else if(n_camino == SEGUNDO_CAMINO){
     fprintf(*archivo_caminos, "NIVEL=2\n");
     fprintf(*archivo_caminos, "CAMINO=2\n");
     escribir_camino(archivo_caminos, camino_2, tope_camino_2);
-  }else if(n_camino == 2){
+  }else if(n_camino == TERCER_CAMINO){
     fprintf(*archivo_caminos, "NIVEL=3\n");
     fprintf(*archivo_caminos, "CAMINO=1\n");
     escribir_camino(archivo_caminos, camino_1, tope_camino_1);
-  }else if(n_camino == 3){
+  }else if(n_camino == CUARTO_CAMINO){
     fprintf(*archivo_caminos, "CAMINO=2\n");
     escribir_camino(archivo_caminos, camino_2, tope_camino_2);
-  }else if(n_camino == 4){
+  }else if(n_camino == QUINTO_CAMINO){
     fprintf(*archivo_caminos, "NIVEL=4\n");
     fprintf(*archivo_caminos, "CAMINO=1\n");
     escribir_camino(archivo_caminos, camino_1, tope_camino_1);
@@ -1184,7 +1203,7 @@ void modificar_ruta_caminos(char ruta[MAX_RUTA]){
 void modificar_resistencia_torres(int *resistencia_torre){
   printf(AMARILLO"\n-> Inserta el valor de la resistencia que desees (Por defecto = -1): "VERDE);
   scanf("%i",resistencia_torre);
-  while(((*resistencia_torre < 1) || (*resistencia_torre > 9999)) && (*resistencia_torre != -1)){
+  while(((*resistencia_torre < MIN_RESIST_TORRE) || (*resistencia_torre > MAXIMO_RESIST_TORRE)) && (*resistencia_torre != -1)){
     printf(AMARILLO"\n-> Ese valor no es valido (Por defecto = -1): "VERDE);
     scanf("%i",resistencia_torre);
   }
@@ -1196,7 +1215,7 @@ void modificar_resistencia_torres(int *resistencia_torre){
 void modificar_cant_defensores(int *cant_defensores){
   printf(AMARILLO"\n-> Inserta el valor de la cantidad de defensores que desees (Por defecto = -1): "VERDE);
   scanf("%i",cant_defensores);
-  while(((*cant_defensores < 0) || (*cant_defensores > 99)) && (*cant_defensores != -1)){
+  while(((*cant_defensores < MIN_DEFENSORES) || (*cant_defensores > MAX_DEFENSORES)) && (*cant_defensores != -1)){
     printf(AMARILLO"\n-> Ese valor no es valido (Por defecto = -1): "VERDE);
     scanf("%i",cant_defensores);
   }
@@ -1208,7 +1227,7 @@ void modificar_cant_defensores(int *cant_defensores){
 void modificar_costo_a_torre(int *costo){
   printf(AMARILLO"\n-> Inserta el valor del costo a la torre que desees (Por defecto = -1): "VERDE);
   scanf("%i",costo);
-  while((*costo < 1) && (*costo != -1)){
+  while((*costo < MIN_COSTO) && (*costo != -1)){
     printf(AMARILLO"\n-> Ese valor no es valido (Por defecto = -1): "VERDE);
     scanf("%i",costo);
   }
@@ -1221,7 +1240,7 @@ void modificar_costo_a_torre(int *costo){
 void modificar_porcentaje(int *porcentaje, char nombre[MAX_NOMBRE_PORCENTAJE]){
   printf(AMARILLO"\n-> Inserta el valor del porcentaje de %s que desees (Por defecto = -1): "VERDE, nombre);
   scanf("%i",porcentaje);
-  while(((*porcentaje < 1) || (*porcentaje > 100)) && (*porcentaje != -1)){
+  while(((*porcentaje < MIN_PORCENTAJE) || (*porcentaje > MAX_PORCENTAJE)) && (*porcentaje != -1)){
     printf(AMARILLO"\n-> Ese valor no es valido (Por defecto = -1): "VERDE);
     scanf("%i",porcentaje);
   }
@@ -1335,10 +1354,10 @@ void crear_configuracion_personalizada(char ruta[MAX_RUTA]){
     return;
   }
   configuracion_t config;
-  cargar_config_defecto(&config);
   int opcion_actual = 0;
   int tecla_pulsada;
   bool termino_de_configurar = false;
+  cargar_config_defecto(&config);
   presentacion_config_menu();
   actualizar_config_menu(config, &opcion_actual);
   while(!termino_de_configurar){
@@ -1362,17 +1381,24 @@ void crear_configuracion_personalizada(char ruta[MAX_RUTA]){
 
 /******************************************************************************************* Mostrar ranking *****************************************************************************************/
 
+/*
+* Postcondiciones: Mostrara un mensaje de que no se pudo abrir el ranking personalizado.
+*/
+void mostrar_mensaje_error_perso(){
+  printf(AMARILLO"\n\n               ╔═══════════════════════════════════════════════════════════════╗"BLANCO"\n");
+  printf(AMARILLO"               ║ NO existe ese ranking, se mostrara                            ║\n");
+  printf(AMARILLO"               ║ el ranking con la configuracion DEFAULT                       ║\n");
+  printf(AMARILLO"               ╚═══════════════════════════════════════════════════════════════╝"BLANCO"\n");
+  detener_el_tiempo(2);
+  system("clear");
+}
+
 void mostrar_ranking(int cantidad_rank, char ruta_ranking[MAX_RUTA]){
   system("clear");
   FILE* arch_ranking;
   arch_ranking = fopen(ruta_ranking, "r");
   if(!arch_ranking && (strcmp(ruta_ranking, "ranking.csv") != 0)){
-      printf(AMARILLO"\n\n               ╔═══════════════════════════════════════════════════════════════╗"BLANCO"\n");
-      printf(AMARILLO"               ║ NO existe ese ranking, se mostrara                            ║\n");
-      printf(AMARILLO"               ║ el ranking con la configuracion DEFAULT                       ║\n");
-      printf(AMARILLO"               ╚═══════════════════════════════════════════════════════════════╝"BLANCO"\n");
-      detener_el_tiempo(2);
-      system("clear");
+      mostrar_mensaje_error();
       strcpy(ruta_ranking, "ranking.csv");
       arch_ranking = fopen(ruta_ranking, "r");
     }

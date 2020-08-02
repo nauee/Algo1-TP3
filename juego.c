@@ -25,7 +25,10 @@
 #define MAX_NOMBRE 50
 #define RANKING "ranking"
 #define CSV ".csv"
-#define FORMATO_RANKING "%[^;];%i\n"
+#define FORMATO_CAMINOS "%i;%i\n"
+#define FORMATO_R_RANKING "%[^;];%i\n"
+#define FORMATO_W_RANKING "%s;%i\n"
+#define FORMATO_R_INDICADOR "%[^=]="
 const int NIVEL_1 = 1;
 const int NIVEL_2 = 2;
 const int NIVEL_3 = 3;
@@ -361,12 +364,12 @@ bool son_caminos_separados(juego_t juego){
 */
 void leer_camino(FILE** arch_camino, coordenada_t camino[MAX_LONGITUD_CAMINO], int *tope_camino){
   coordenada_t casillero_camino;
-  int leidos = fscanf(*arch_camino, "%i;%i\n", &(casillero_camino.fil), &(casillero_camino.col));
+  int leidos = fscanf(*arch_camino, FORMATO_CAMINO, &(casillero_camino.fil), &(casillero_camino.col));
   while(leidos == 2){
     camino[*tope_camino].fil = casillero_camino.fil;
     camino[*tope_camino].col = casillero_camino.col;
     (*tope_camino) ++;
-    leidos = fscanf(*arch_camino, "%i;%i\n", &(casillero_camino.fil), &(casillero_camino.col));
+    leidos = fscanf(*arch_camino, FORMATO_CAMINO, &(casillero_camino.fil), &(casillero_camino.col));
   }
 }
 
@@ -714,10 +717,10 @@ void actualizar_menu_si_no(juego_t juego, int *opcion_actual, torres_t maximos, 
 	system("clear");
 
 	mostrar_juego(juego, maximos);
-	if(juego.torres.enanos_extra > 0 && juego.torres.elfos_extra > 0 && puede_costear_defensor(juego, config, ENANOS) && puede_costear_defensor(juego, config, ELFOS)){
+	if(juego.torres.enanos_extra > NINGUN_DEFENSOR && juego.torres.elfos_extra > NINGUN_DEFENSOR && puede_costear_defensor(juego, config, ENANOS) && puede_costear_defensor(juego, config, ELFOS)){
 			printf(""AMARILLO" -> Tenes disponible un enano o un elfo extra para ubicar"VERDE"\n");
 			printf(""AMARILLO" -> Quieres poner un defensor extra?\n");
-		}else if(juego.torres.enanos_extra > 0 && puede_costear_defensor(juego, config, ENANOS)){
+		}else if(juego.torres.enanos_extra > NINGUN_DEFENSOR && puede_costear_defensor(juego, config, ENANOS)){
 			printf(""AMARILLO" -> Tenes disponible un enano extra para ubicar"VERDE"\n");
 			printf(""AMARILLO" -> Quieres poner un enano extra? || Costo ( Torre 1 -> %i || Torre 2 -> %i )\n", config.enanos_extra[1], config.enanos_extra[2]);
 		}else{
@@ -963,7 +966,7 @@ void escribir_archivo_puntaje(int puntaje, char ruta_ranking[MAX_RUTA], char nom
 		FILE* ranking_viejo = fopen(ruta_ranking, "r");
 		if(!ranking_viejo){
 			FILE* ranking_act = fopen(ruta_ranking, "w");
-			fprintf(ranking_act, "%s;%i\n", nombre_jugador, puntaje);
+			fprintf(ranking_act, FORMATO_W_RANKING, nombre_jugador, puntaje);
 			fclose(ranking_act);
 			return;
 		}
@@ -976,27 +979,27 @@ void escribir_archivo_puntaje(int puntaje, char ruta_ranking[MAX_RUTA], char nom
 		int punt_leyendo;
 		int leidos = fscanf(ranking_viejo, FORMATO_RANKING, nom_leyendo, &punt_leyendo);
 		while(leidos == 2 && punt_leyendo > puntaje){
-			fprintf(ranking_act, "%s;%i\n", nom_leyendo, punt_leyendo);
+			fprintf(ranking_act, FORMATO_W_RANKING, nom_leyendo, punt_leyendo);
 			leidos = fscanf(ranking_viejo, FORMATO_RANKING, nom_leyendo, &punt_leyendo);
 		}
 		if(leidos != 2){
-			fprintf(ranking_act, "%s;%i\n", nombre_jugador, puntaje);
+			fprintf(ranking_act, FORMATO_W_RANKING, nombre_jugador, puntaje);
 		}else{
 			if(punt_leyendo == puntaje){
 				if(strcmp(nombre_jugador, nom_leyendo) < 0){
-					fprintf(ranking_act, "%s;%i\n", nombre_jugador, puntaje);
-					fprintf(ranking_act, "%s;%i\n", nom_leyendo, punt_leyendo);
+					fprintf(ranking_act, FORMATO_W_RANKING, nombre_jugador, puntaje);
+					fprintf(ranking_act, FORMATO_W_RANKING, nom_leyendo, punt_leyendo);
 				}else{
-					fprintf(ranking_act, "%s;%i\n", nom_leyendo, punt_leyendo);
-					fprintf(ranking_act, "%s;%i\n", nombre_jugador, puntaje);
+					fprintf(ranking_act, FORMATO_W_RANKING, nom_leyendo, punt_leyendo);
+					fprintf(ranking_act, FORMATO_W_RANKING, nombre_jugador, puntaje);
 				}
 			}else{
-				fprintf(ranking_act, "%s;%i\n", nombre_jugador, puntaje);
-				fprintf(ranking_act, "%s;%i\n", nom_leyendo, punt_leyendo);
+				fprintf(ranking_act, FORMATO_W_RANKING, nombre_jugador, puntaje);
+				fprintf(ranking_act, FORMATO_W_RANKING, nom_leyendo, punt_leyendo);
 			}
 			leidos = fscanf(ranking_viejo, FORMATO_RANKING, nom_leyendo, &punt_leyendo);
 			while(leidos == 2){
-				fprintf(ranking_act, "%s;%i\n", nom_leyendo, punt_leyendo);
+				fprintf(ranking_act, FORMATO_W_RANKING, nom_leyendo, punt_leyendo);
 				leidos = fscanf(ranking_viejo, FORMATO_RANKING, nom_leyendo, &punt_leyendo);
 			}
 		}
@@ -1053,7 +1056,7 @@ void finalizar_juego(juego_t juego, configuracion_t config, char nombre_config[M
 	}else if(estado_juego(juego) == JUEGO_PERDIDO){
 		int orcos_muertos;
 		if(juego.nivel_actual == NIVEL_1){
-			orcos_muertos = 0;
+			orcos_muertos = NINGUN_ENEMIGO;
 		}else if(juego.nivel_actual == NIVEL_2){
 			orcos_muertos = ENEMIGOS_NV_1;
 		}else if(juego.nivel_actual == NIVEL_3){
@@ -1113,7 +1116,7 @@ void llenar_config(configuracion_t *config, FILE** arch_config){
     llenar_config_defecto(config);
   }else{
 		char indicador[MAX_NOMBRE];
-		int leidos = fscanf(*arch_config,"%[^=]=", indicador);
+		int leidos = fscanf(*arch_config,FORMATO_R_INDICADOR, indicador);
 		while(leidos != EOF){
 			if(strcmp(indicador, "RESISTENCIA_TORRES") == 0){
 				fscanf(*arch_config,"%i,%i\n", &(config -> resistencia_torres[0]), &(config -> resistencia_torres[1]));
@@ -1185,7 +1188,7 @@ void llenar_config(configuracion_t *config, FILE** arch_config){
 			}else if(strcmp(indicador, "CAMINOS") == 0){
 				fscanf(*arch_config, "%[^\n]\n", config -> caminos);
 			}
-			leidos = fscanf(*arch_config,"%[^=]=", indicador);
+			leidos = fscanf(*arch_config,FORMATO_R_INDICADOR, indicador);
 		}
   }
 }
@@ -1240,8 +1243,16 @@ void jugar_juego(char ruta_config[MAX_RUTA], char ruta_grabacion[MAX_RUTA]){
   configuracion_t config;
   FILE* arch_grabacion;
 	FILE* arch_config;
+	FILE* arch_camino;
 	char nombre_config[MAX_NOMBRE];
 	strcpy(nombre_config, STR_POR_DEFECTO);
+	srand ((unsigned)time(NULL));
+	int viento;
+	int humedad;
+	char animo_legolas;
+	char animo_gimli;
+	juego_t juego;
+	torres_t maximos;
 	if(strcmp(ruta_config, STR_POR_DEFECTO) != 0){
 		arch_config = fopen(ruta_config, "r");
 		if(arch_config){
@@ -1255,18 +1266,11 @@ void jugar_juego(char ruta_config[MAX_RUTA], char ruta_grabacion[MAX_RUTA]){
 	if(strcmp(ruta_grabacion, STR_POR_DEFECTO) != 0){
 		arch_grabacion = fopen(ruta_grabacion, "w");
 	}
-  srand ((unsigned)time(NULL));
-  int viento;
-  int humedad;
-  char animo_legolas;
-  char animo_gimli;
-  juego_t juego;
   mostrar_dibujo_portada();
 	cargar_animos_necesarios(&viento,&humedad,&animo_legolas,&animo_gimli,config);
   animos(&viento,&humedad,&animo_legolas,&animo_gimli);
   inicializar_juego(&juego, viento, humedad, animo_legolas,animo_gimli,config);
-	torres_t maximos = juego.torres;
-  FILE* arch_camino;
+	maximos = juego.torres;
   if(strcmp(config.caminos, STR_POR_DEFECTO) != 0){
     arch_camino = fopen(config.caminos, "r");
   }
