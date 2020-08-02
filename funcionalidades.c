@@ -69,8 +69,8 @@ const int CAMINO_1 = 1;
 const int CAMINO_2 = 2;
 const int MAXIMO_RESIST_TORRE = 9999;
 const int MIN_RESIST_TORRE = 1;
-const int MAX_DEFENSORES = 99;
-const int MIN_DEFENSORES = 0;
+const int MAX_DEFENSORES_CONFIG = 99;
+const int MIN_DEFENSORES_CONFIG = 0;
 const int MIN_COSTO = 1;
 const int MIN_PORCENTAJE = 1;
 const int MAX_PORCENTAJE = 100;
@@ -1215,7 +1215,7 @@ void modificar_resistencia_torres(int *resistencia_torre){
 void modificar_cant_defensores(int *cant_defensores){
   printf(AMARILLO"\n-> Inserta el valor de la cantidad de defensores que desees (Por defecto = -1): "VERDE);
   scanf("%i",cant_defensores);
-  while(((*cant_defensores < MIN_DEFENSORES) || (*cant_defensores > MAX_DEFENSORES)) && (*cant_defensores != -1)){
+  while(((*cant_defensores < MIN_DEFENSORES_CONFIG) || (*cant_defensores > MAX_DEFENSORES_CONFIG)) && (*cant_defensores != -1)){
     printf(AMARILLO"\n-> Ese valor no es valido (Por defecto = -1): "VERDE);
     scanf("%i",cant_defensores);
   }
@@ -1384,7 +1384,7 @@ void crear_configuracion_personalizada(char ruta[MAX_RUTA]){
 /*
 * Postcondiciones: Mostrara un mensaje de que no se pudo abrir el ranking personalizado.
 */
-void mostrar_mensaje_error_perso(){
+void mostrar_mensaje_error(){
   printf(AMARILLO"\n\n               ╔═══════════════════════════════════════════════════════════════╗"BLANCO"\n");
   printf(AMARILLO"               ║ NO existe ese ranking, se mostrara                            ║\n");
   printf(AMARILLO"               ║ el ranking con la configuracion DEFAULT                       ║\n");

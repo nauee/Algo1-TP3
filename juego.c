@@ -25,7 +25,7 @@
 #define MAX_NOMBRE 50
 #define RANKING "ranking"
 #define CSV ".csv"
-#define FORMATO_CAMINOS "%i;%i\n"
+#define FORMATO_CAMINO "%i;%i\n"
 #define FORMATO_R_RANKING "%[^;];%i\n"
 #define FORMATO_W_RANKING "%s;%i\n"
 #define FORMATO_R_INDICADOR "%[^=]="
@@ -977,10 +977,10 @@ void escribir_archivo_puntaje(int puntaje, char ruta_ranking[MAX_RUTA], char nom
 		}
 		char nom_leyendo[MAX_NOMBRE];
 		int punt_leyendo;
-		int leidos = fscanf(ranking_viejo, FORMATO_RANKING, nom_leyendo, &punt_leyendo);
+		int leidos = fscanf(ranking_viejo, FORMATO_R_RANKING, nom_leyendo, &punt_leyendo);
 		while(leidos == 2 && punt_leyendo > puntaje){
 			fprintf(ranking_act, FORMATO_W_RANKING, nom_leyendo, punt_leyendo);
-			leidos = fscanf(ranking_viejo, FORMATO_RANKING, nom_leyendo, &punt_leyendo);
+			leidos = fscanf(ranking_viejo, FORMATO_R_RANKING, nom_leyendo, &punt_leyendo);
 		}
 		if(leidos != 2){
 			fprintf(ranking_act, FORMATO_W_RANKING, nombre_jugador, puntaje);
@@ -997,10 +997,10 @@ void escribir_archivo_puntaje(int puntaje, char ruta_ranking[MAX_RUTA], char nom
 				fprintf(ranking_act, FORMATO_W_RANKING, nombre_jugador, puntaje);
 				fprintf(ranking_act, FORMATO_W_RANKING, nom_leyendo, punt_leyendo);
 			}
-			leidos = fscanf(ranking_viejo, FORMATO_RANKING, nom_leyendo, &punt_leyendo);
+			leidos = fscanf(ranking_viejo, FORMATO_R_RANKING, nom_leyendo, &punt_leyendo);
 			while(leidos == 2){
 				fprintf(ranking_act, FORMATO_W_RANKING, nom_leyendo, punt_leyendo);
-				leidos = fscanf(ranking_viejo, FORMATO_RANKING, nom_leyendo, &punt_leyendo);
+				leidos = fscanf(ranking_viejo, FORMATO_R_RANKING, nom_leyendo, &punt_leyendo);
 			}
 		}
 		fclose(ranking_viejo);
